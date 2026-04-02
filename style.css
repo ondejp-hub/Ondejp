@@ -17,8 +17,14 @@ header { background-color: var(--branco); padding: 15px; text-align: center; box
 .oculto { display: none !important; }
 .animacao-tela { animation: fadeIn 0.4s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* Procure e ajuste estas classes no seu style.css */
 
-.hero { padding: 30px 20px 70px; text-align: center; background: linear-gradient(135deg, var(--verde-br), #00b347); color: var(--branco); margin-bottom: -50px; position: relative; z-index: 1;}
+.hero { 
+    padding: 30px 20px 40px; /* Diminuímos o padding inferior */
+    background: linear-gradient(135deg, var(--verde-br), #00b347); 
+    color: var(--branco); 
+    text-align: center;
+}
 .hero h1 { font-size: 20px; margin-bottom: 15px; }
 .search-container { display: flex; max-width: 500px; margin: 0 auto; gap: 8px; }
 .search-container input { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 16px; outline: none; color: var(--cor-texto); }
@@ -26,7 +32,14 @@ header { background-color: var(--branco); padding: 15px; text-align: center; box
 .btn-localizacao { background-color: transparent; color: var(--branco); border: 1px solid var(--branco); padding: 8px 15px; border-radius: 20px; margin-top: 15px; font-size: 12px; cursor: pointer; }
 
 /* Carrossel Ajustado para não bloquear o clique */
-.carrossel-section { max-width: 600px; margin: 0 auto; padding: 10px 0; position: relative; z-index: 50; }
+.carrossel-section { 
+    max-width: 600px; 
+    margin: 0 auto; 
+    padding: 15px 0; 
+    background-color: transparent; /* Deixa flutuar sobre o fundo */
+    position: relative; 
+    z-index: 50; 
+}
 .carrossel-container { display: flex; gap: 15px; overflow-x: auto; padding: 10px 20px 15px; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
 .carrossel-container::-webkit-scrollbar { display: none; }
 
