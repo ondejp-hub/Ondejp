@@ -4,119 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ondejp.com | O seu guia no Japão</title>
-    <style>
-        :root {
-            --cor-fundo: #f4f7f6;
-            --cor-texto: #333333;
-            --verde-br: #009b3a;
-            --amarelo-br: #fedf00;
-            --azul-br: #002776;
-            --branco: #ffffff;
-            --verde-whats: #25D366;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background-color: var(--cor-fundo); color: var(--cor-texto); padding-bottom: 50px; overflow-x: hidden; }
-        
-        header { background-color: var(--branco); padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 26px; font-weight: bold; color: var(--azul-br); text-decoration: none; cursor: pointer; }
-        .logo span { color: var(--verde-br); }
-        
-        /* Navegação e Animação */
-        .oculto { display: none !important; }
-        .animacao-tela { animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Tela Inicial */
-        .hero { padding: 30px 20px 70px; text-align: center; background: linear-gradient(135deg, var(--verde-br), #00b347); color: var(--branco); margin-bottom: -50px; }
-        .hero h1 { font-size: 20px; margin-bottom: 15px; }
-        .search-container { display: flex; max-width: 500px; margin: 0 auto; gap: 8px; }
-        .search-container input { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 16px; outline: none; color: var(--cor-texto); }
-        .btn-busca { background-color: var(--amarelo-br); color: var(--azul-br); border: none; padding: 0 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
-        .btn-localizacao { background-color: transparent; color: var(--branco); border: 1px solid var(--branco); padding: 8px 15px; border-radius: 20px; margin-top: 15px; font-size: 12px; cursor: pointer; }
-
-        /* MÁGICA 1: O NOVO CARROSSEL DE HISTÓRIAS */
-        .carrossel-section { max-width: 600px; margin: 0 auto; padding: 10px 0; position: relative; z-index: 10; }
-        
-        .carrossel-container { 
-            display: flex; 
-            gap: 15px; 
-            overflow-x: auto; /* Permite rolagem horizontal */
-            padding: 10px 20px 15px; 
-            -webkit-overflow-scrolling: touch; /* Rolagem suave no iPhone */
-            scroll-snap-type: x mandatory; /* Efeito de snap para travar no círculo */
-        }
-        
-        /* Esconde a barra de rolagem */
-        .carrossel-container::-webkit-scrollbar { display: none; }
-        
-        .item-carrossel { 
-            flex: 0 0 75px; /* Define o tamanho exato de cada item (círculo+espaço) */
-            text-align: center; 
-            cursor: pointer; 
-            scroll-snap-align: start; /* Onde o snap trava */
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .item-carrossel:active { transform: scale(0.95); transition: 0.1s; } /* Efeito de clique */
-
-        /* Estilo das Bolas */
-        .circulo { 
-            width: 75px; 
-            height: 75px; 
-            border-radius: 50%; /* Faz ser um círculo perfeito */
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            font-size: 32px; 
-            color: white; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
-            border: 2px solid white; 
-            margin-bottom: 8px;
-            transition: 0.2s;
-        }
-
-        /* Cores Diferentes para cada Círculo */
-        .color-1 .circulo { background-color: #f39c12; } /* Laranja: Mercado */
-        .color-2 .circulo { background-color: #e74c3c; } /* Vermelho: Saúde */
-        .color-3 .circulo { background-color: #e056fd; } /* Rosa: Beleza */
-        .color-4 .circulo { background-color: #3498db; } /* Azul Claro: Serviços */
-        .color-5 .circulo { background-color: #f1c40f; } /* Amarelo: Restaurante */
-        .color-6 .circulo { background-color: #27ae60; } /* Verde: Despachante */
-        
-        /* Legenda embaixo da Bola */
-        .legenda { 
-            font-size: 11px; 
-            font-weight: bold; 
-            color: var(--azul-br); 
-            display: block; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            white-space: nowrap; 
-            max-width: 75px;
-        }
-
-        /* Tela de Resultados e Cartões (mantidos) */
-        .cabecalho-resultados { max-width: 600px; margin: 0 auto; padding: 15px 15px 0; display: flex; align-items: center; gap: 10px; }
-        .btn-voltar { background: var(--azul-br); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px; }
-        .titulo-pagina { color: var(--azul-br); font-size: 16px; font-weight: bold; }
-
-        .resultados { padding: 15px; max-width: 600px; margin: 0 auto; display: grid; gap: 12px; }
-        .card-item { background: var(--branco); padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 5px solid var(--verde-br); }
-        .card-item h3 { color: var(--azul-br); font-size: 17px; margin-bottom: 3px; }
-        .descricao { font-size: 13px; color: #555; font-style: italic; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px dashed #eee; line-height: 1.4; }
-        
-        .info-link { font-size: 13px; color: var(--azul-br); text-decoration: none; display: block; margin-bottom: 3px; font-weight: 500; }
-        .grupo-botoes { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-        .btn-maps { background: #4285F4; color: white; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; }
-        .btn-whats { background: var(--verde-whats); color: white; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; }
-        .tag { display: inline-block; background: #e8f5e9; color: var(--verde-br); padding: 3px 8px; border-radius: 15px; font-size: 10px; font-weight: bold; margin-top: 8px; }
-        .sem-resultados { text-align: center; padding: 40px; color: #999; font-style: italic; font-size: 14px; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header><a class="logo" onclick="voltarParaHome()">onde<span>jp</span>.com</a></header>
+    <header><a class="logo" id="btnLogo">onde<span>jp</span>.com</a></header>
 
     <div id="telaInicial" class="animacao-tela">
         <section class="hero">
@@ -130,163 +22,36 @@
 
         <section class="carrossel-section">
             <div class="carrossel-container">
-                
-                <div class="item-carrossel color-1" onclick="filtrar('Mercado', '🛒 Mercados')">
-                    <div class="circulo">🛒</div>
-                    <span class="legenda">Mercados</span>
+                <div class="item-carrossel color-1" data-cat="Mercado" data-titulo="🛒 Mercados">
+                    <div class="circulo">🛒</div><span class="legenda">Mercados</span>
                 </div>
-                
-                <div class="item-carrossel color-2" onclick="filtrar('Saúde', '🏥 Saúde')">
-                    <div class="circulo">🏥</div>
-                    <span class="legenda">Saúde</span>
+                <div class="item-carrossel color-2" data-cat="Saúde" data-titulo="🏥 Saúde">
+                    <div class="circulo">🏥</div><span class="legenda">Saúde</span>
                 </div>
-                
-                <div class="item-carrossel color-3" onclick="filtrar('Estética', '💅 Beleza')">
-                    <div class="circulo">💅</div>
-                    <span class="legenda">Beleza</span>
+                <div class="item-carrossel color-3" data-cat="Estética" data-titulo="💅 Beleza">
+                    <div class="circulo">💅</div><span class="legenda">Beleza</span>
                 </div>
-                
-                <div class="item-carrossel color-4" onclick="filtrar('Serviços', '💼 Serviços')">
-                    <div class="circulo">💼</div>
-                    <span class="legenda">Serviços</span>
+                <div class="item-carrossel color-4" data-cat="Serviços" data-titulo="💼 Serviços">
+                    <div class="circulo">💼</div><span class="legenda">Serviços</span>
                 </div>
-                
-                <div class="item-carrossel color-5" onclick="filtrar('Restaurante', '🍽️ Comer')">
-                    <div class="circulo">🍽️</div>
-                    <span class="legenda">Comer</span>
+                <div class="item-carrossel color-5" data-cat="Restaurante" data-titulo="🍽️ Comer">
+                    <div class="circulo">🍽️</div><span class="legenda">Comer</span>
                 </div>
-
-                <div class="item-carrossel color-6" onclick="filtrar('Despachante', '📄 Papéis')">
-                    <div class="circulo">📄</div>
-                    <span class="legenda">Papéis</span>
+                <div class="item-carrossel color-6" data-cat="Despachante" data-titulo="📄 Papéis">
+                    <div class="circulo">📄</div><span class="legenda">Papéis</span>
                 </div>
-
             </div>
         </section>
     </div>
 
     <div id="telaResultados" class="oculto animacao-tela">
         <div class="cabecalho-resultados">
-            <button class="btn-voltar" onclick="voltarParaHome()">⬅ Voltar</button>
+            <button class="btn-voltar" id="btnVoltar">⬅ Voltar</button>
             <h2 class="titulo-pagina" id="tituloSecao">Resultados</h2>
         </div>
         <section class="resultados" id="areaResultados"></section>
     </div>
 
-    <script>
-        let bancoDeDados = [];
-        const areaResultados = document.getElementById('areaResultados');
-        const inputBusca = document.getElementById('inputBusca');
-        const telaInicial = document.getElementById('telaInicial');
-        const telaResultados = document.getElementById('telaResultados');
-        const tituloSecao = document.getElementById('tituloSecao');
-
-        const urlPlanilha = "https://docs.google.com/spreadsheets/d/1-1Lb3UorM05byHJzUDsqfipyCzSfl7ODd1PC61hv3QM/export?format=tsv";
-
-        function abrirTelaResultados(titulo) {
-            telaInicial.classList.add('oculto');
-            telaResultados.classList.remove('oculto');
-            tituloSecao.innerText = titulo;
-            window.scrollTo(0, 0); 
-        }
-
-        function voltarParaHome() {
-            telaResultados.classList.add('oculto');
-            telaInicial.classList.remove('oculto');
-            areaResultados.innerHTML = ""; 
-            inputBusca.value = ""; 
-            window.scrollTo(0, 0);
-        }
-
-        async function carregarDados() {
-            try {
-                const resposta = await fetch(urlPlanilha);
-                const dadosTexto = await resposta.text();
-                const linhas = dadosTexto.split('\n');
-                for (let i = 1; i < linhas.length; i++) {
-                    if (!linhas[i].trim()) continue; 
-                    const colunas = linhas[i].split('\t'); 
-                    const item = {
-                        nome: colunas[0] || "", cidade: colunas[1] || "", endereco: colunas[2] || "", 
-                        telefone: colunas[3] || "", site: colunas[4] || "", redesocial: colunas[5] || "", 
-                        whatsapp: colunas[6] || "", maps_link: colunas[7] || "", categoria: colunas[8] || "", descricao: colunas[9] || ""
-                    };
-                    bancoDeDados.push(item);
-                }
-            } catch (erro) { console.error("Erro no banco:", erro); }
-        }
-
-        function exibir(lista) {
-            areaResultados.innerHTML = "";
-            if (lista.length === 0) {
-                areaResultados.innerHTML = "<p class='sem-resultados'>Ops! Nada por enquanto nessa categoria. Tente outra buscar na barra de busca.</p>";
-                return;
-            }
-            lista.forEach(item => {
-                const linkSite = item.site ? `<a href="${item.site}" target="_blank" class="info-link">🌐 Site Oficial</a>` : "";
-                const linkSocial = item.redesocial ? `<a href="${item.redesocial}" target="_blank" class="info-link">📱 Redes Sociais</a>` : "";
-                
-                let botaoZap = "";
-                if (item.whatsapp) {
-                    const numeroLimpo = item.whatsapp.replace(/\D/g, '');
-                    botaoZap = `<a href="https://wa.me/${numeroLimpo}" target="_blank" class="btn-whats">💬 WhatsApp</a>`;
-                }
-                const botaoMaps = item.maps_link ? `<a href="${item.maps_link}" target="_blank" class="btn-maps">🗺️ Maps</a>` : "";
-                const textoDescricao = item.descricao ? `<p class="descricao">"${item.descricao}"</p>` : "";
-
-                areaResultados.innerHTML += `
-                    <div class="card-item">
-                        <h3>${item.nome}</h3>
-                        ${textoDescricao}
-                        <p style="font-size: 13px; margin-bottom: 2px;">📍 ${item.cidade} - ${item.endereco}</p>
-                        <p style="font-size: 13px; margin-bottom: 6px;">📞 ${item.telefone}</p>
-                        ${linkSite}
-                        ${linkSocial}
-                        <div class="grupo-botoes">
-                            ${botaoZap}
-                            ${botaoMaps}
-                        </div>
-                        <span class="tag">${item.categoria}</span>
-                    </div>
-                `;
-            });
-        }
-
-        function filtrar(categoriaAlvo, tituloExibicao) {
-            abrirTelaResultados(tituloExibicao);
-            areaResultados.innerHTML = "<p class='sem-resultados'>⏳ Carregando...</p>";
-            
-            setTimeout(() => {
-                const busca = categoriaAlvo.toLowerCase();
-                const filtrados = bancoDeDados.filter(item => {
-                    const cat = item.categoria.toLowerCase();
-                    // Agrupamentos Inteligentes (Saúde pega hospital e clínica)
-                    if (busca === 'saúde') return cat.includes('hospital') || cat.includes('clínica') || cat.includes('dentista');
-                    if (busca === 'estética') return cat.includes('manicure') || cat.includes('cabeleireiro') || cat.includes('beleza');
-                    if (busca === 'serviços') return cat.includes('banco') || cat.includes('interprete');
-                    return cat.includes(busca);
-                });
-                exibir(filtrados);
-            }, 300); 
-        }
-
-        document.getElementById('btnBusca').addEventListener('click', () => {
-            const termo = inputBusca.value.toLowerCase();
-            if(!termo) return;
-            abrirTelaResultados(`Busca: "${inputBusca.value}"`);
-            const filtrados = bancoDeDados.filter(item => 
-                item.nome.toLowerCase().includes(termo) || 
-                item.cidade.toLowerCase().includes(termo) || 
-                item.categoria.toLowerCase().includes(termo) ||
-                item.descricao.toLowerCase().includes(termo)
-            );
-            exibir(filtrados);
-        });
-
-        const btnGPS = document.getElementById('btnLocalizacao');
-        btnGPS.addEventListener('click', () => {
-            btnGPS.textContent = "📍 Localizando...";
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(async (pos) => {
-                    const { latitude, longitude } = pos.coords;
-                    const res = await fetch(`https://nomin
+    <script src="script.js"></script>
+</body>
+</html>
