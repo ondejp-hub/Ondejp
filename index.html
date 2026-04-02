@@ -12,76 +12,112 @@
             --amarelo-br: #fedf00;
             --azul-br: #002776;
             --branco: #ffffff;
-            --verde-whats: #25D366; /* Nova cor do WhatsApp */
+            --verde-whats: #25D366;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background-color: var(--cor-fundo); color: var(--cor-texto); padding-bottom: 50px; }
         
-        header { background-color: var(--branco); padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .logo { font-size: 28px; font-weight: bold; color: var(--azul-br); text-decoration: none; }
+        header { background-color: var(--branco); padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 28px; font-weight: bold; color: var(--azul-br); text-decoration: none; cursor: pointer; }
         .logo span { color: var(--verde-br); }
         
+        /* Classes Mágicas para Navegação */
+        .oculto { display: none !important; }
+        .animacao-tela { animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Tela Inicial */
         .hero { padding: 40px 20px; text-align: center; background: linear-gradient(135deg, var(--verde-br), #00b347); color: var(--branco); }
         .hero h1 { font-size: 22px; margin-bottom: 20px; }
-        
         .search-container { display: flex; max-width: 500px; margin: 0 auto; gap: 8px; }
         .search-container input { flex: 1; padding: 15px; border: none; border-radius: 8px; font-size: 16px; outline: none; }
         .btn-busca { background-color: var(--amarelo-br); color: var(--azul-br); border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        
         .btn-localizacao { background-color: transparent; color: var(--branco); border: 1px solid var(--branco); padding: 10px 20px; border-radius: 20px; margin-top: 15px; font-size: 13px; cursor: pointer; }
 
-        .categorias { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px; max-width: 600px; margin: -30px auto 0; }
+        .categorias { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px; max-width: 600px; margin: -30px auto 0; position: relative; z-index: 10; }
         .card-categoria { background-color: var(--branco); padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
         .icone { font-size: 28px; display: block; margin-bottom: 5px; }
         .card-categoria span { font-size: 13px; font-weight: bold; color: var(--azul-br); }
 
+        /* Tela de Resultados */
+        .cabecalho-resultados { max-width: 600px; margin: 0 auto; padding: 20px 20px 0; display: flex; align-items: center; gap: 15px; }
+        .btn-voltar { background: var(--azul-br); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .titulo-pagina { color: var(--azul-br); font-size: 18px; }
+
         .resultados { padding: 20px; max-width: 600px; margin: 0 auto; display: grid; gap: 15px; }
         .card-item { background: var(--branco); padding: 18px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 6px solid var(--verde-br); }
-        .card-item h3 { color: var(--azul-br); font-size: 18px; margin-bottom: 10px; }
+        .card-item h3 { color: var(--azul-br); font-size: 18px; margin-bottom: 4px; }
+        .descricao { font-size: 14px; color: #555; font-style: italic; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed #eee; }
         
-        /* Links e Botões */
-        .info-link { font-size: 14px; color: #002776; text-decoration: none; display: block; margin-bottom: 4px; font-weight: 500; }
-        
+        .info-link { font-size: 14px; color: var(--azul-br); text-decoration: none; display: block; margin-bottom: 4px; font-weight: 500; }
         .grupo-botoes { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
-        
-        .btn-maps { background: #4285F4; color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; }
-        .btn-whats { background: var(--verde-whats); color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; }
-        
+        .btn-maps { background: #4285F4; color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; }
+        .btn-whats { background: var(--verde-whats); color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; }
         .tag { display: inline-block; background: #e8f5e9; color: var(--verde-br); padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; margin-top: 10px; }
+        .sem-resultados { text-align: center; padding: 40px; color: #999; font-style: italic; }
     </style>
 </head>
 <body>
 
-    <header><a href="#" class="logo" onclick="window.location.reload()">onde<span>jp</span>.com</a></header>
+    <header><a class="logo" onclick="voltarParaHome()">onde<span>jp</span>.com</a></header>
 
-    <section class="hero">
-        <h1>O que você procura hoje?</h1>
-        <div class="search-container">
-            <input type="text" placeholder="Ex: Banco, Mercado..." id="inputBusca">
-            <button class="btn-busca" id="btnBusca">Ir</button>
+    <div id="telaInicial" class="animacao-tela">
+        <section class="hero">
+            <h1>O que você procura hoje?</h1>
+            <div class="search-container">
+                <input type="text" placeholder="Ex: Banco, Mercado..." id="inputBusca">
+                <button class="btn-busca" id="btnBusca">Ir</button>
+            </div>
+            <button class="btn-localizacao" id="btnLocalizacao">📍 Perto de mim</button>
+        </section>
+
+        <section class="categorias">
+            <div class="card-categoria" onclick="filtrar('Mercado', '🛒 Mercados')"><span class="icone">🛒</span><span>Mercados</span></div>
+            <div class="card-categoria" onclick="filtrar('Saúde', '🏥 Saúde')"><span class="icone">🏥</span><span>Saúde</span></div>
+            <div class="card-categoria" onclick="filtrar('Estética', '💅 Beleza')"><span class="icone">💅</span><span>Beleza</span></div>
+            <div class="card-categoria" onclick="filtrar('Serviços', '💼 Serviços')"><span class="icone">💼</span><span>Serviços</span></div>
+        </section>
+    </div>
+
+    <div id="telaResultados" class="oculto animacao-tela">
+        <div class="cabecalho-resultados">
+            <button class="btn-voltar" onclick="voltarParaHome()">⬅ Voltar</button>
+            <h2 class="titulo-pagina" id="tituloSecao">Resultados</h2>
         </div>
-        <button class="btn-localizacao" id="btnLocalizacao">📍 Perto de mim</button>
-    </section>
-
-    <section class="categorias">
-        <div class="card-categoria" onclick="filtrar('Mercado')"><span class="icone">🛒</span><span>Mercados</span></div>
-        <div class="card-categoria" onclick="filtrar('Serviços')"><span class="icone">💼</span><span>Serviços</span></div>
-    </section>
-
-    <section class="resultados" id="areaResultados"></section>
+        <section class="resultados" id="areaResultados"></section>
+    </div>
 
     <script>
-                // 1. Variável e Elementos
         let bancoDeDados = [];
         const areaResultados = document.getElementById('areaResultados');
         const inputBusca = document.getElementById('inputBusca');
+        
+        // Elementos das Telas
+        const telaInicial = document.getElementById('telaInicial');
+        const telaResultados = document.getElementById('telaResultados');
+        const tituloSecao = document.getElementById('tituloSecao');
 
-        // COLE AQUI O LINK QUE O GOOGLE SHEETS GEROU (ENTRE AS ASPAS)
+        // Seu link oficial do banco de dados
         const urlPlanilha = "https://docs.google.com/spreadsheets/d/1-1Lb3UorM05byHJzUDsqfipyCzSfl7ODd1PC61hv3QM/export?format=tsv";
 
-        // 2. Carregar Dados
+        // MÁGICA DA NAVEGAÇÃO
+        function abrirTelaResultados(titulo) {
+            telaInicial.classList.add('oculto');
+            telaResultados.classList.remove('oculto');
+            tituloSecao.innerText = titulo;
+            window.scrollTo(0, 0); // Joga a tela pro topo
+        }
+
+        function voltarParaHome() {
+            telaResultados.classList.add('oculto');
+            telaInicial.classList.remove('oculto');
+            areaResultados.innerHTML = ""; // Limpa a lista
+            inputBusca.value = ""; // Limpa a busca
+            window.scrollTo(0, 0);
+        }
+
+        // CARREGAR DADOS
         async function carregarDados() {
-            areaResultados.innerHTML = "<p class='sem-resultados'>⏳ Carregando locais...</p>";
             try {
                 const resposta = await fetch(urlPlanilha);
                 const dadosTexto = await resposta.text();
@@ -90,54 +126,43 @@
                 for (let i = 1; i < linhas.length; i++) {
                     if (!linhas[i].trim()) continue; 
                     const colunas = linhas[i].split('\t'); 
-                    
                     const item = {
-                        nome: colunas[0] || "",
-                        cidade: colunas[1] || "",
-                        endereco: colunas[2] || "",
-                        telefone: colunas[3] || "",
-                        site: colunas[4] || "",
-                        redesocial: colunas[5] || "",
-                        whatsapp: colunas[6] || "",
-                        maps_link: colunas[7] || "",
-                        categoria: colunas[8] || "",
-                        descricao: colunas[9] || "" // <-- NOVA COLUNA DE DESCRIÇÃO AQUI
+                        nome: colunas[0] || "", cidade: colunas[1] || "", endereco: colunas[2] || "", 
+                        telefone: colunas[3] || "", site: colunas[4] || "", redesocial: colunas[5] || "", 
+                        whatsapp: colunas[6] || "", maps_link: colunas[7] || "", categoria: colunas[8] || "", descricao: colunas[9] || ""
                     };
                     bancoDeDados.push(item);
                 }
-                exibir(bancoDeDados);
             } catch (erro) {
-                areaResultados.innerHTML = "<p class='sem-resultados'>⚠️ Erro ao carregar os dados.</p>";
+                console.error("Erro no banco:", erro);
             }
         }
 
-        // 3. Exibir na Tela
+        // EXIBIR NA TELA
         function exibir(lista) {
             areaResultados.innerHTML = "";
             if (lista.length === 0) {
-                areaResultados.innerHTML = "<p class='sem-resultados'>Ops! Não encontramos nada com esse nome.</p>";
+                areaResultados.innerHTML = "<p class='sem-resultados'>Nenhum local encontrado para esta categoria.</p>";
                 return;
             }
-            lista.forEach(item => {                
-                const linkSite = item.site ? `<a href="https://${item.site.replace('https://', '')}" target="_blank" class="info-link">🌐 Site: ${item.site}</a>` : "";
+            lista.forEach(item => {
+                const linkSite = item.site ? `<a href="https://${item.site.replace('https://', '')}" target="_blank" class="info-link">🌐 Site Oficial</a>` : "";
                 const linkSocial = item.redesocial ? `<a href="${item.redesocial}" target="_blank" class="info-link">📱 Instagram / Rede Social</a>` : "";
-
+                
                 let botaoZap = "";
                 if (item.whatsapp) {
                     const numeroLimpo = item.whatsapp.replace(/\D/g, '');
                     botaoZap = `<a href="https://wa.me/${numeroLimpo}" target="_blank" class="btn-whats">💬 Chamar no Zap</a>`;
                 }
                 const botaoMaps = item.maps_link ? `<a href="${item.maps_link}" target="_blank" class="btn-maps">🗺️ Maps</a>` : "";
-                
-                // MÁGICA DA DESCRIÇÃO: Só exibe se houver texto
-                const textoDescricao = item.descricao ? `<p style="font-size: 14px; color: #555; font-style: italic; margin: 8px 0; padding-bottom: 8px; border-bottom: 1px dashed #ddd;">"${item.descricao}"</p>` : "";
+                const textoDescricao = item.descricao ? `<p class="descricao">"${item.descricao}"</p>` : "";
 
                 areaResultados.innerHTML += `
                     <div class="card-item">
                         <h3>${item.nome}</h3>
                         ${textoDescricao}
-                        <p>📍 ${item.cidade} - ${item.endereco}</p>
-                        <p>📞 ${item.telefone}</p>
+                        <p style="font-size: 14px; margin-bottom: 4px;">📍 ${item.cidade} - ${item.endereco}</p>
+                        <p style="font-size: 14px; margin-bottom: 8px;">📞 ${item.telefone}</p>
                         ${linkSite}
                         ${linkSocial}
                         <div class="grupo-botoes">
@@ -150,47 +175,41 @@
             });
         }
 
-        // 4. Filtros
-        function filtrar(categoriaAlvo) {
-            const busca = categoriaAlvo.toLowerCase();
-            const filtrados = bancoDeDados.filter(item => {
-                const cat = item.categoria.toLowerCase();
-                if (busca === 'serviços') return cat.includes('banco') || cat.includes('despachante');
-                return cat.includes(busca);
-            });
-            exibir(filtrados);
+        // FILTROS (Agora abrem a página)
+        function filtrar(categoriaAlvo, tituloExibicao) {
+            abrirTelaResultados(tituloExibicao);
+            areaResultados.innerHTML = "<p class='sem-resultados'>⏳ Carregando...</p>";
+            
+            setTimeout(() => {
+                const busca = categoriaAlvo.toLowerCase();
+                const filtrados = bancoDeDados.filter(item => {
+                    const cat = item.categoria.toLowerCase();
+                    if (busca === 'saúde') return cat.includes('hospital') || cat.includes('clínica') || cat.includes('dentista');
+                    if (busca === 'estética') return cat.includes('manicure') || cat.includes('cabeleireiro');
+                    if (busca === 'serviços') return cat.includes('banco') || cat.includes('despachante');
+                    return cat.includes(busca);
+                });
+                exibir(filtrados);
+            }, 300); // Um pequeno delay para a transição ficar suave
         }
 
-        // 5. Busca
+        // BUSCA POR TEXTO
         document.getElementById('btnBusca').addEventListener('click', () => {
             const termo = inputBusca.value.toLowerCase();
+            if(!termo) return; // Se estiver vazio, não faz nada
+            
+            abrirTelaResultados(`Busca: "${inputBusca.value}"`);
+            
             const filtrados = bancoDeDados.filter(item => 
                 item.nome.toLowerCase().includes(termo) || 
                 item.cidade.toLowerCase().includes(termo) || 
                 item.categoria.toLowerCase().includes(termo) ||
-                item.descricao.toLowerCase().includes(termo) // Agora busca palavras dentro da descrição também!
+                item.descricao.toLowerCase().includes(termo)
             );
             exibir(filtrados);
         });
 
-        // 6. GPS
-        const btnGPS = document.getElementById('btnLocalizacao');
-        btnGPS.addEventListener('click', () => {
-            btnGPS.textContent = "📍 Localizando...";
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(async (pos) => {
-                    const { latitude, longitude } = pos.coords;
-                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-                    const data = await res.json();
-                    const bairro = data.address.suburb || data.address.city || "sua região";
-                    btnGPS.textContent = `📍 Em ${bairro}`;
-                    inputBusca.value = bairro;
-                }, () => {
-                    btnGPS.textContent = "📍 Erro ao localizar";
-                });
-            }
-        });
-
+        // Inicia carregando os dados da planilha em "segundo plano"
         carregarDados();
     </script>
 </body>
