@@ -1,78 +1,25 @@
-:root {
-    --cor-fundo: #f4f7f6;
-    --cor-texto: #333333;
-    --verde-br: #009b3a;
-    --amarelo-br: #fedf00;
-    --azul-br: #002776;
-    --branco: #ffffff;
-    --verde-whats: #25D366;
+/* AJUSTES DO HEADER PARA O MENU */
+header { display: flex; justify-content: space-between; align-items: center; }
+#btnMenu { background: none; border: none; font-size: 24px; color: var(--azul-br); padding: 5px; cursor: pointer; touch-action: manipulation; }
+
+/* ESTILOS DO MENU LATERAL */
+#menuLateral {
+    position: fixed; top: 0; left: -280px; width: 260px; height: 100vh;
+    background-color: var(--branco); box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    z-index: 1000; transition: left 0.3s ease; padding: 20px; display: flex; flex-direction: column;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-body { background-color: var(--cor-fundo); color: var(--cor-texto); padding-bottom: 50px; overflow-x: hidden; }
-
-header { background-color: var(--branco); padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-.logo { font-size: 26px; font-weight: bold; color: var(--azul-br); text-decoration: none; cursor: pointer; }
-.logo span { color: var(--verde-br); }
-
-.oculto { display: none !important; }
-.animacao-tela { animation: fadeIn 0.4s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-/* Procure e ajuste estas classes no seu style.css */
-
-.hero { 
-    padding: 30px 20px 40px; /* Diminuímos o padding inferior */
-    background: linear-gradient(135deg, var(--verde-br), #00b347); 
-    color: var(--branco); 
-    text-align: center;
+#menuLateral.menu-aberto { left: 0; }
+#menuLateral a {
+    font-size: 18px; color: var(--azul-br); text-decoration: none; font-weight: 500;
+    margin-bottom: 25px; cursor: pointer; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px;
 }
-.hero h1 { font-size: 20px; margin-bottom: 15px; }
-.search-container { display: flex; max-width: 500px; margin: 0 auto; gap: 8px; }
-.search-container input { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 16px; outline: none; color: var(--cor-texto); }
-.btn-busca { background-color: var(--amarelo-br); color: var(--azul-br); border: none; padding: 0 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
-.btn-localizacao { background-color: transparent; color: var(--branco); border: 1px solid var(--branco); padding: 8px 15px; border-radius: 20px; margin-top: 15px; font-size: 12px; cursor: pointer; }
+#btnFecharMenu { background: none; border: none; font-size: 20px; color: #999; align-self: flex-end; cursor: pointer; padding: 10px; }
 
-/* Carrossel Ajustado para não bloquear o clique */
-.carrossel-section { 
-    max-width: 600px; 
-    margin: 0 auto; 
-    padding: 15px 0; 
-    background-color: transparent; /* Deixa flutuar sobre o fundo */
-    position: relative; 
-    z-index: 50; 
+/* PELÍCULA ESCURA ATRÁS DO MENU */
+#peliculaMenu {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(2px);
 }
-.carrossel-container { display: flex; gap: 15px; overflow-x: auto; padding: 10px 20px 15px; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
-.carrossel-container::-webkit-scrollbar { display: none; }
 
-.item-carrossel { flex: 0 0 75px; text-align: center; cursor: pointer; scroll-snap-align: start; -webkit-tap-highlight-color: transparent; }
-.item-carrossel:active { transform: scale(0.95); transition: 0.1s; }
-
-.circulo { width: 75px; height: 75px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 32px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border: 2px solid white; margin-bottom: 8px; transition: 0.2s; user-select: none; }
-
-.color-1 .circulo { background-color: #f39c12; }
-.color-2 .circulo { background-color: #e74c3c; }
-.color-3 .circulo { background-color: #e056fd; }
-.color-4 .circulo { background-color: #3498db; }
-.color-5 .circulo { background-color: #f1c40f; }
-.color-6 .circulo { background-color: #27ae60; }
-.color-7 .circulo { background-color: #c0392b; }
-
-.legenda { font-size: 11px; font-weight: bold; color: var(--azul-br); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75px; }
-
-/* Resultados */
-.cabecalho-resultados { max-width: 600px; margin: 0 auto; padding: 15px 15px 0; display: flex; align-items: center; gap: 10px; }
-.btn-voltar { background: var(--azul-br); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px; }
-.titulo-pagina { color: var(--azul-br); font-size: 16px; font-weight: bold; }
-
-.resultados { padding: 15px; max-width: 600px; margin: 0 auto; display: grid; gap: 12px; }
-.card-item { background: var(--branco); padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 5px solid var(--verde-br); }
-.card-item h3 { color: var(--azul-br); font-size: 17px; margin-bottom: 3px; }
-.descricao { font-size: 13px; color: #555; font-style: italic; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px dashed #eee; line-height: 1.4; }
-
-.info-link { font-size: 13px; color: var(--azul-br); text-decoration: none; display: block; margin-bottom: 3px; font-weight: 500; }
-.grupo-botoes { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-.btn-maps { background: #4285F4; color: white; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; }
-.btn-whats { background: var(--verde-whats); color: white; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; }
-.tag { display: inline-block; background: #e8f5e9; color: var(--verde-br); padding: 3px 8px; border-radius: 15px; font-size: 10px; font-weight: bold; margin-top: 8px; }
-.sem-resultados { text-align: center; padding: 40px; color: #999; font-style: italic; font-size: 14px; }
-/* Força o iPad a entender que todos os links são clicáveis */
-a, .item-carrossel, .btn-busca, .btn-localizacao, .btn-voltar { touch-action: manipulation; cursor: pointer; }
+/* ESTILO PÁGINAS ESTÁTICAS */
+.pagina-estatica { max-width: 600px; margin: 0 auto; padding: 20px; }
