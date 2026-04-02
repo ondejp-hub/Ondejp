@@ -111,14 +111,21 @@ function exibir(lista) {
 <div id="telaResultados" class="oculto animacao-tela">
     </div>
 
-// OUVINTE DE CLIQUES NO CARROSSEL
+// OUVINTE DE CLIQUES NO CARROSSEL (Atualizado para iPad/iPhone)
 document.querySelectorAll('.item-carrossel').forEach(botao => {
-    botao.addEventListener('click', () => {
-        const categoria = botao.getAttribute('data-cat');
-        const titulo = botao.getAttribute('data-titulo');
-        filtrar(categoria, titulo);
+    // Escuta tanto o clique do mouse quanto o toque na tela do iPad
+    ['click', 'touchstart'].forEach(evento => {
+        botao.addEventListener(evento, function(e) {
+            // Evita que o iPad dispare o clique duas vezes
+            if(evento === 'touchstart') e.preventDefault(); 
+            
+            const categoria = this.getAttribute('data-cat');
+            const titulo = this.getAttribute('data-titulo');
+            filtrar(categoria, titulo);
+        });
     });
 });
+
 
 // BUSCA POR TEXTO
 document.getElementById('btnBusca').addEventListener('click', () => {
