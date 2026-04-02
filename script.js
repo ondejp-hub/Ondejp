@@ -84,7 +84,7 @@ function exibir(lista) {
     });
 }
 
-// FILTRAR POR CATEGORIA (Corrigido para clique seguro)
+// FILTRAR POR CATEGORIA (Com Agrupamento Inteligente)
 function filtrar(categoriaAlvo, tituloExibicao) {
     abrirTelaResultados(tituloExibicao);
     areaResultados.innerHTML = "<p class='sem-resultados'>⏳ Carregando...</p>";
@@ -93,10 +93,17 @@ function filtrar(categoriaAlvo, tituloExibicao) {
         const busca = categoriaAlvo.toLowerCase();
         const filtrados = bancoDeDados.filter(item => {
             const cat = item.categoria.toLowerCase();
+            
+            // Lógica das Macro-Categorias:
+            if (busca === 'mercados') return cat.includes('mercado') || cat.includes('açougue');
+            if (busca === 'comer') return cat.includes('restaurante');
             if (busca === 'saúde') return cat.includes('hospital') || cat.includes('clínica') || cat.includes('dentista');
-            if (busca === 'estética') return cat.includes('manicure') || cat.includes('cabeleireiro') || cat.includes('beleza');
-            if (busca === 'serviços') return cat.includes('banco') || cat.includes('interprete');
-            return cat.includes(busca);
+            if (busca === 'beleza') return cat.includes('manicure') || cat.includes('cabeleireiro') || cat.includes('maquiador') || cat.includes('estética');
+            if (busca === 'burocracia') return cat.includes('despachante') || cat.includes('intérprete') || cat.includes('tradução');
+            if (busca === 'serviços') return cat.includes('banco') || cat.includes('designer') || cat.includes('guia') || cat.includes('outros');
+            if (busca === 'ajuda') return cat.includes('prefeitura') || cat.includes('delegacia') || cat.includes('embaixada');
+            
+            return cat.includes(busca); // Fallback caso não seja nenhuma das acima
         });
         exibir(filtrados);
     }, 150); 
