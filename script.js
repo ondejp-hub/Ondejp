@@ -84,30 +84,32 @@ function exibir(lista) {
     });
 }
 
-// FILTRAR POR CATEGORIA (Com Agrupamento Inteligente)
-function filtrar(categoriaAlvo, tituloExibicao) {
-    abrirTelaResultados(tituloExibicao);
-    areaResultados.innerHTML = "<p class='sem-resultados'>⏳ Carregando...</p>";
-    
-    setTimeout(() => {
-        const busca = categoriaAlvo.toLowerCase();
-        const filtrados = bancoDeDados.filter(item => {
-            const cat = item.categoria.toLowerCase();
-            
-            // Lógica das Macro-Categorias:
-            if (busca === 'mercados') return cat.includes('mercado') || cat.includes('açougue');
-            if (busca === 'comer') return cat.includes('restaurante');
-            if (busca === 'saúde') return cat.includes('hospital') || cat.includes('clínica') || cat.includes('dentista');
-            if (busca === 'beleza') return cat.includes('manicure') || cat.includes('cabeleireiro') || cat.includes('maquiador') || cat.includes('estética');
-            if (busca === 'burocracia') return cat.includes('despachante') || cat.includes('intérprete') || cat.includes('tradução');
-            if (busca === 'serviços') return cat.includes('banco') || cat.includes('designer') || cat.includes('guia') || cat.includes('outros');
-            if (busca === 'ajuda') return cat.includes('prefeitura') || cat.includes('delegacia') || cat.includes('embaixada');
-            
-            return cat.includes(busca); // Fallback caso não seja nenhuma das acima
-        });
-        exibir(filtrados);
-    }, 150); 
-}
+<header><a class="logo" id="btnLogo">onde<span>jp</span>.com</a></header>
+
+<section class="carrossel-section">
+    <div class="carrossel-container">
+        <div class="item-carrossel color-1" data-cat="Mercados" data-titulo="🛒 Mercados & Açougues">
+            <div class="circulo">🛒</div><span class="legenda">Mercados</span>
+        </div>
+        <div class="item-carrossel color-7" data-cat="Ajuda" data-titulo="🚨 Utilidade Pública">
+            <div class="circulo">🚨</div><span class="legenda">Ajuda</span>
+        </div>
+    </div>
+</section>
+
+<div id="telaInicial" class="animacao-tela">
+    <section class="hero">
+        <h1>O que você procura hoje?</h1>
+        <div class="search-container">
+            <input type="text" placeholder="Ex: Banco, Mercado..." id="inputBusca">
+            <button class="btn-busca" id="btnBusca">Ir</button>
+        </div>
+        <button class="btn-localizacao" id="btnLocalizacao">📍 Perto de mim</button>
+    </section>
+</div>
+
+<div id="telaResultados" class="oculto animacao-tela">
+    </div>
 
 // OUVINTE DE CLIQUES NO CARROSSEL
 document.querySelectorAll('.item-carrossel').forEach(botao => {
