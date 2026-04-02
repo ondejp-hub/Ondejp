@@ -5,10 +5,8 @@ const telaInicial = document.getElementById('telaInicial');
 const telaResultados = document.getElementById('telaResultados');
 const tituloSecao = document.getElementById('tituloSecao');
 
-// O seu link do banco de dados na nuvem
 const urlPlanilha = "https://docs.google.com/spreadsheets/d/1-1Lb3UorM05byHJzUDsqfipyCzSfl7ODd1PC61hv3QM/export?format=tsv";
 
-// NAVEGAÇÃO ENTRE TELAS
 function abrirTelaResultados(titulo) {
     telaInicial.classList.add('oculto');
     telaResultados.classList.remove('oculto');
@@ -24,11 +22,9 @@ function voltarParaHome() {
     window.scrollTo(0, 0);
 }
 
-// BOTOES DE VOLTAR E LOGO
 document.getElementById('btnLogo').addEventListener('click', voltarParaHome);
 document.getElementById('btnVoltar').addEventListener('click', voltarParaHome);
 
-// CARREGAR DADOS DO GOOGLE SHEETS
 async function carregarDados() {
     try {
         const resposta = await fetch(urlPlanilha);
@@ -47,15 +43,21 @@ async function carregarDados() {
     } catch (erro) { console.error("Erro no banco:", erro); }
 }
 
-// EXIBIR NA TELA
 function exibir(lista) {
     areaResultados.innerHTML = "";
     if (lista.length === 0) {
-        areaResultados.innerHTML = "<p class='sem-resultados'>Ops! Nada por enquanto nessa categoria. Tente buscar na barra acima.</p>";
+        areaResultados.innerHTML = "<p class='sem-resultados'>Ops! Nada por enquanto nessa categoria.</p>";
         return;
     }
     lista.forEach(item => {
-        const linkSite = item.site ? `<a href="${item.site}" target="_blank" class="info-link">🌐 Site Oficial</a>` : "";
+        
+        // Garante HTTPS no site
+        let linkSite = "";
+        if (item.site) {
+            let siteLimpo = item.site.replace('https://', '').replace('http://', '');
+            linkSite = `<a href="https://${siteLimpo}" target="_blank" class="info-link">🌐 Site Oficial</a>`;
+        }
+        
         const linkSocial = item.redesocial ? `<a href="${item.redesocial}" target="_blank" class="info-link">📱 Redes Sociais</a>` : "";
         
         let botaoZap = "";
@@ -63,7 +65,14 @@ function exibir(lista) {
             const numeroLimpo = item.whatsapp.replace(/\D/g, '');
             botaoZap = `<a href="https://wa.me/${numeroLimpo}" target="_blank" class="btn-whats">💬 WhatsApp</a>`;
         }
-        const botaoMaps = item.maps_link ? `<a href="${item.maps_link}" target="_blank" class="btn-maps">🗺️ Maps</a>` : "";
+        
+        // Garante HTTPS no Google Maps
+        let botaoMaps = "";
+        if (item.maps_link) {
+            const linkSeguro = item.maps_link.replace('http://', 'https://');
+            botaoMaps = `<a href="${linkSeguro}" target="_blank" class="btn-maps">🗺️ Maps</a>`;
+        }
+
         const textoDescricao = item.descricao ? `<p class="descricao">"${item.descricao}"</p>` : "";
 
         areaResultados.innerHTML += `
@@ -84,50 +93,36 @@ function exibir(lista) {
     });
 }
 
-<header><a class="logo" id="btnLogo">onde<span>jp</span>.com</a></header>
-
-<section class="carrossel-section">
-    <div class="carrossel-container">
-        <div class="item-carrossel color-1" data-cat="Mercados" data-titulo="🛒 Mercados & Açougues">
-            <div class="circulo">🛒</div><span class="legenda">Mercados</span>
-        </div>
-        <div class="item-carrossel color-7" data-cat="Ajuda" data-titulo="🚨 Utilidade Pública">
-            <div class="circulo">🚨</div><span class="legenda">Ajuda</span>
-        </div>
-    </div>
-</section>
-
-<div id="telaInicial" class="animacao-tela">
-    <section class="hero">
-        <h1>O que você procura hoje?</h1>
-        <div class="search-container">
-            <input type="text" placeholder="Ex: Banco, Mercado..." id="inputBusca">
-            <button class="btn-busca" id="btnBusca">Ir</button>
-        </div>
-        <button class="btn-localizacao" id="btnLocalizacao">📍 Perto de mim</button>
-    </section>
-</div>
-
-<div id="telaResultados" class="oculto animacao-tela">
-    </div>
-
-// OUVINTE DE CLIQUES NO CARROSSEL (Atualizado para iPad/iPhone)
-document.querySelectorAll('.item-carrossel').forEach(botao => {
-    // Escuta tanto o clique do mouse quanto o toque na tela do iPad
-    ['click', 'touchstart'].forEach(evento => {
-        botao.addEventListener(evento, function(e) {
-            // Evita que o iPad dispare o clique duas vezes
-            if(evento === 'touchstart') e.preventDefault(); 
-            
-            const categoria = this.getAttribute('data-cat');
-            const titulo = this.getAttribute('data-titulo');
-            filtrar(categoria, titulo);
+function filtrar(categoriaAlvo, tituloExibicao) {
+    abrirTelaResultados(tituloExibicao);
+    areaResultados.innerHTML = "<p class='sem-resultados'>⏳ Carregando...</p>";
+    
+    setTimeout(() => {
+        const busca = categoriaAlvo.toLowerCase();
+        const filtrados = bancoDeDados.filter(item => {
+            const cat = item.categoria.toLowerCase();
+            if (busca === 'mercados') return cat.includes('mercado') || cat.includes('açougue');
+            if (busca === 'comer') return cat.includes('restaurante');
+            if (busca === 'saúde') return cat.includes('hospital') || cat.includes('clínica') || cat.includes('dentista');
+            if (busca === 'beleza') return cat.includes('manicure') || cat.includes('cabeleireiro') || cat.includes('maquiador') || cat.includes('estética');
+            if (busca === 'burocracia') return cat.includes('despachante') || cat.includes('intérprete') || cat.includes('tradução');
+            if (busca === 'serviços') return cat.includes('banco') || cat.includes('designer') || cat.includes('guia') || cat.includes('outros');
+            if (busca === 'ajuda') return cat.includes('prefeitura') || cat.includes('delegacia') || cat.includes('embaixada');
+            return cat.includes(busca);
         });
+        exibir(filtrados);
+    }, 150); 
+}
+
+// OUVINTE DO CARROSSEL (Voltou a ser simples e seguro)
+document.querySelectorAll('.item-carrossel').forEach(botao => {
+    botao.addEventListener('click', function() {
+        const categoria = this.getAttribute('data-cat');
+        const titulo = this.getAttribute('data-titulo');
+        filtrar(categoria, titulo);
     });
 });
 
-
-// BUSCA POR TEXTO
 document.getElementById('btnBusca').addEventListener('click', () => {
     const termo = inputBusca.value.toLowerCase();
     if(!termo) return;
@@ -141,46 +136,26 @@ document.getElementById('btnBusca').addEventListener('click', () => {
     exibir(filtrados);
 });
 
-// GPS// 6. LÓGICA DE LOCALIZAÇÃO (GPS)
 const btnGPS = document.getElementById('btnLocalizacao');
-
 btnGPS.addEventListener('click', () => {
-    // 1. Feedback visual imediato
     btnGPS.style.opacity = "0.7";
     btnGPS.textContent = "⌛ Localizando...";
-
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(async (pos) => {
             const { latitude, longitude } = pos.coords;
-
             try {
-                // 2. Busca o endereço usando as coordenadas
                 const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
                 const data = await res.json();
+                const localidade = data.address.city_district || data.address.suburb || data.address.city || data.address.town || "sua região";
                 
-                // 3. Identifica a cidade ou bairro (Prioridade para cidades e distritos de Tóquio)
-                const localidade = data.address.city_district || 
-                                   data.address.suburb || 
-                                   data.address.city || 
-                                   data.address.town || 
-                                   "sua região";
-
-                // 4. Atualiza o botão e o input
                 btnGPS.textContent = `📍 Em ${localidade}`;
                 btnGPS.style.opacity = "1";
                 inputBusca.value = localidade;
-
-                // 5. MÁGICA: Dispara a busca automaticamente!
+                
                 abrirTelaResultados(`Perto de: ${localidade}`);
-                
                 const termo = localidade.toLowerCase();
-                const filtrados = bancoDeDados.filter(item => 
-                    item.cidade.toLowerCase().includes(termo) || 
-                    item.endereco.toLowerCase().includes(termo)
-                );
-                
+                const filtrados = bancoDeDados.filter(item => item.cidade.toLowerCase().includes(termo) || item.endereco.toLowerCase().includes(termo));
                 exibir(filtrados);
-
             } catch (erro) {
                 btnGPS.textContent = "📍 Erro ao identificar local";
                 btnGPS.style.opacity = "1";
@@ -188,13 +163,8 @@ btnGPS.addEventListener('click', () => {
         }, () => {
             btnGPS.textContent = "📍 GPS Desativado";
             btnGPS.style.opacity = "1";
-            alert("Por favor, ative a localização no seu iPhone para usar esta função.");
         });
-    } else {
-        btnGPS.textContent = "📍 GPS não suportado";
     }
 });
 
-
-// Partida no Motor
 carregarDados();
