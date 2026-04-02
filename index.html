@@ -118,10 +118,10 @@
                 areaResultados.innerHTML = "<p class='sem-resultados'>Ops! Não encontramos nada com esse nome.</p>";
                 return;
             }
-            lista.forEach(item => {
+            lista.forEach(item => {                
                 const linkSite = item.site ? `<a href="https://${item.site.replace('https://', '')}" target="_blank" class="info-link">🌐 Site: ${item.site}</a>` : "";
-                const linkSocial = item.redesocial ? `<p class="info-link">📱 Redes: ${item.redesocial}</p>` : "";
-                
+                const linkSocial = item.redesocial ? `<a href="${item.redesocial}" target="_blank" class="info-link">📱 Instagram / Rede Social</a>` : "";
+
                 let botaoZap = "";
                 if (item.whatsapp) {
                     const numeroLimpo = item.whatsapp.replace(/\D/g, '');
