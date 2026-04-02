@@ -71,7 +71,7 @@
     <section class="resultados" id="areaResultados"></section>
 
     <script>
-                // 1. Variável vazia (os dados virão da planilha agora)
+                // 1. Variável e Elementos
         let bancoDeDados = [];
         const areaResultados = document.getElementById('areaResultados');
         const inputBusca = document.getElementById('inputBusca');
@@ -79,23 +79,18 @@
         // COLE AQUI O LINK QUE O GOOGLE SHEETS GEROU (ENTRE AS ASPAS)
         const urlPlanilha = "https://docs.google.com/spreadsheets/d/1-1Lb3UorM05byHJzUDsqfipyCzSfl7ODd1PC61hv3QM/export?format=tsv";
 
-        // 2. Função que lê os dados do Google Sheets
+        // 2. Carregar Dados
         async function carregarDados() {
             areaResultados.innerHTML = "<p class='sem-resultados'>⏳ Carregando locais...</p>";
             try {
                 const resposta = await fetch(urlPlanilha);
                 const dadosTexto = await resposta.text();
-                
-                // Quebra o texto em linhas
                 const linhas = dadosTexto.split('\n');
                 
-                // Pula a primeira linha (cabeçalho) e lê o resto
                 for (let i = 1; i < linhas.length; i++) {
-                    if (!linhas[i].trim()) continue; // Ignora linhas em branco
+                    if (!linhas[i].trim()) continue; 
+                    const colunas = linhas[i].split('\t'); 
                     
-                    const colunas = linhas[i].split('\t'); // Separa por Tabulação (TSV)
-                    
-                    // Monta o objeto baseando-se na ordem das colunas da sua planilha
                     const item = {
                         nome: colunas[0] || "",
                         cidade: colunas[1] || "",
@@ -105,20 +100,18 @@
                         redesocial: colunas[5] || "",
                         whatsapp: colunas[6] || "",
                         maps_link: colunas[7] || "",
-                        categoria: colunas[8] || ""
+                        categoria: colunas[8] || "",
+                        descricao: colunas[9] || "" // <-- NOVA COLUNA DE DESCRIÇÃO AQUI
                     };
                     bancoDeDados.push(item);
                 }
-                
-                // Quando terminar de carregar tudo, exibe na tela
                 exibir(bancoDeDados);
             } catch (erro) {
-                console.error("Erro ao carregar a planilha:", erro);
-                areaResultados.innerHTML = "<p class='sem-resultados'>⚠️ Erro ao carregar os dados. Verifique sua conexão.</p>";
+                areaResultados.innerHTML = "<p class='sem-resultados'>⚠️ Erro ao carregar os dados.</p>";
             }
         }
 
-        // 3. Função para desenhar os cartões na tela (igual à anterior)
+        // 3. Exibir na Tela
         function exibir(lista) {
             areaResultados.innerHTML = "";
             if (lista.length === 0) {
@@ -135,10 +128,14 @@
                     botaoZap = `<a href="https://wa.me/${numeroLimpo}" target="_blank" class="btn-whats">💬 Chamar no Zap</a>`;
                 }
                 const botaoMaps = item.maps_link ? `<a href="${item.maps_link}" target="_blank" class="btn-maps">🗺️ Maps</a>` : "";
+                
+                // MÁGICA DA DESCRIÇÃO: Só exibe se houver texto
+                const textoDescricao = item.descricao ? `<p style="font-size: 14px; color: #555; font-style: italic; margin: 8px 0; padding-bottom: 8px; border-bottom: 1px dashed #ddd;">"${item.descricao}"</p>` : "";
 
                 areaResultados.innerHTML += `
                     <div class="card-item">
                         <h3>${item.nome}</h3>
+                        ${textoDescricao}
                         <p>📍 ${item.cidade} - ${item.endereco}</p>
                         <p>📞 ${item.telefone}</p>
                         ${linkSite}
@@ -153,7 +150,7 @@
             });
         }
 
-        // 4. Lógica dos Botões de Filtro
+        // 4. Filtros
         function filtrar(categoriaAlvo) {
             const busca = categoriaAlvo.toLowerCase();
             const filtrados = bancoDeDados.filter(item => {
@@ -164,18 +161,19 @@
             exibir(filtrados);
         }
 
-        // 5. Lógica da Barra de Busca por texto
+        // 5. Busca
         document.getElementById('btnBusca').addEventListener('click', () => {
             const termo = inputBusca.value.toLowerCase();
             const filtrados = bancoDeDados.filter(item => 
                 item.nome.toLowerCase().includes(termo) || 
                 item.cidade.toLowerCase().includes(termo) || 
-                item.categoria.toLowerCase().includes(termo)
+                item.categoria.toLowerCase().includes(termo) ||
+                item.descricao.toLowerCase().includes(termo) // Agora busca palavras dentro da descrição também!
             );
             exibir(filtrados);
         });
 
-        // 6. Lógica do GPS
+        // 6. GPS
         const btnGPS = document.getElementById('btnLocalizacao');
         btnGPS.addEventListener('click', () => {
             btnGPS.textContent = "📍 Localizando...";
@@ -193,9 +191,7 @@
             }
         });
 
-        // 7. Comando que dá a partida no motor: Vai buscar na planilha logo que o site abre!
         carregarDados();
-
     </script>
 </body>
 </html>
