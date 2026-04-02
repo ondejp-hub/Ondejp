@@ -8,9 +8,33 @@
 </head>
 <body>
 
-    <header><a class="logo" id="btnLogo">onde<span>jp</span>.com</a></header>
+    <header>
+        <button id="btnMenu">☰</button>
+        <a class="logo" onclick="mudarTela('telaInicial')">onde<span>jp</span>.com</a>
+        <div style="width: 30px;"></div> </header>
+
+    <div id="peliculaMenu" class="oculto"></div>
+    <nav id="menuLateral" class="menu-fechado">
+        <button id="btnFecharMenu">✖</button>
+        <br><br>
+        <a onclick="mudarTela('telaInicial')">🏠 Início</a>
+        <a onclick="mudarTela('telaQuemSomos')">👥 Quem Somos</a>
+        <a onclick="mudarTela('telaCategoriasAv')">🗂️ Categorias (Em breve)</a>
+        <a onclick="mudarTela('telaContato')">✉️ Contato</a>
+    </nav>
+
+    <div id="telaInicial" class="animacao-tela">
+        <section class="hero">
+            <h1>O que você procura hoje?</h1>
+            <div class="search-container">
+                <input type="text" placeholder="Ex: Banco, Mercado..." id="inputBusca">
+                <button class="btn-busca" id="btnBusca">Ir</button>
+            </div>
+            <button class="btn-localizacao" id="btnLocalizacao">📍 Perto de mim</button>
+        </section>
+
         <section class="carrossel-section">
-                        <div class="carrossel-container">
+            <div class="carrossel-container">
                 <div class="item-carrossel color-1" data-cat="Mercados" data-titulo="🛒 Mercados & Açougues">
                     <div class="circulo">🛒</div><span class="legenda">Mercados</span>
                 </div>
@@ -23,7 +47,7 @@
                 <div class="item-carrossel color-3" data-cat="Beleza" data-titulo="💅 Estética & Beleza">
                     <div class="circulo">💅</div><span class="legenda">Beleza</span>
                 </div>
-                <div class="item-carrossel color-6" data-cat="Burocracia" data-titulo="📄 Documentos & Suporte">
+                <div class="item-carrossel color-6" data-cat="Burocracia" data-titulo="📄 Documentos">
                     <div class="circulo">📄</div><span class="legenda">Burocracia</span>
                 </div>
                 <div class="item-carrossel color-4" data-cat="Serviços" data-titulo="💼 Serviços Gerais">
@@ -33,25 +57,35 @@
                     <div class="circulo">🚨</div><span class="legenda">Ajuda</span>
                 </div>
             </div>
-
-        </section>
-    <div id="telaInicial" class="animacao-tela">
-        <section class="hero">
-            <h1>O que você procura hoje?</h1>
-            <div class="search-container">
-                <input type="text" placeholder="Ex: Banco, Mercado..." id="inputBusca">
-                <button class="btn-busca" id="btnBusca">Ir</button>
-            </div>
-            <button class="btn-localizacao" id="btnLocalizacao">📍 Perto de mim</button>
         </section>
     </div>
 
     <div id="telaResultados" class="oculto animacao-tela">
         <div class="cabecalho-resultados">
-            <button class="btn-voltar" id="btnVoltar">⬅ Voltar</button>
+            <button class="btn-voltar" onclick="mudarTela('telaInicial')">⬅ Voltar</button>
             <h2 class="titulo-pagina" id="tituloSecao">Resultados</h2>
         </div>
         <section class="resultados" id="areaResultados"></section>
+    </div>
+
+    <div id="telaQuemSomos" class="oculto animacao-tela pagina-estatica">
+        <h2 class="titulo-pagina">Quem Somos</h2>
+        <div class="card-item" style="margin-top: 15px;">
+            <p style="line-height: 1.6;">O <strong>ondejp.com</strong> nasceu com a missão de conectar a comunidade brasileira no Japão. Acreditamos que encontrar serviços no nosso idioma não deveria ser difícil.</p>
+            <br>
+            <p style="line-height: 1.6;">Feito com dedicação para facilitar o seu dia a dia, desde a padaria até a emissão de documentos.</p>
+        </div>
+    </div>
+
+    <div id="telaContato" class="oculto animacao-tela pagina-estatica">
+        <h2 class="titulo-pagina">Contato</h2>
+        <div class="card-item" style="margin-top: 15px;">
+            <p>Quer indicar um local ou falar com a gente?</p>
+            <div class="grupo-botoes" style="margin-top: 20px;">
+                <a href="https://wa.me/seunumeroaqui" target="_blank" class="btn-whats" style="width: 100%; justify-content: center; padding: 12px; font-size: 16px;">💬 Falar no WhatsApp</a>
+                <a href="https://instagram.com/seuinsta" target="_blank" class="btn-maps" style="width: 100%; justify-content: center; padding: 12px; font-size: 16px; background: #E1306C;">📱 Seguir no Instagram</a>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
