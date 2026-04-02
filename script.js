@@ -132,21 +132,60 @@ document.getElementById('btnBusca').addEventListener('click', () => {
     exibir(filtrados);
 });
 
-// GPS
+// GPS// 6. LÓGICA DE LOCALIZAÇÃO (GPS)
 const btnGPS = document.getElementById('btnLocalizacao');
+
 btnGPS.addEventListener('click', () => {
-    btnGPS.textContent = "📍 Localizando...";
+    // 1. Feedback visual imediato
+    btnGPS.style.opacity = "0.7";
+    btnGPS.textContent = "⌛ Localizando...";
+
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(async (pos) => {
             const { latitude, longitude } = pos.coords;
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-            const data = await res.json();
-            const bairro = data.address.suburb || data.address.city || "sua região";
-            btnGPS.textContent = `📍 Em ${bairro}`;
-            inputBusca.value = bairro;
-        }, () => { btnGPS.textContent = "📍 Erro ao localizar"; });
+
+            try {
+                // 2. Busca o endereço usando as coordenadas
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                const data = await res.json();
+                
+                // 3. Identifica a cidade ou bairro (Prioridade para cidades e distritos de Tóquio)
+                const localidade = data.address.city_district || 
+                                   data.address.suburb || 
+                                   data.address.city || 
+                                   data.address.town || 
+                                   "sua região";
+
+                // 4. Atualiza o botão e o input
+                btnGPS.textContent = `📍 Em ${localidade}`;
+                btnGPS.style.opacity = "1";
+                inputBusca.value = localidade;
+
+                // 5. MÁGICA: Dispara a busca automaticamente!
+                abrirTelaResultados(`Perto de: ${localidade}`);
+                
+                const termo = localidade.toLowerCase();
+                const filtrados = bancoDeDados.filter(item => 
+                    item.cidade.toLowerCase().includes(termo) || 
+                    item.endereco.toLowerCase().includes(termo)
+                );
+                
+                exibir(filtrados);
+
+            } catch (erro) {
+                btnGPS.textContent = "📍 Erro ao identificar local";
+                btnGPS.style.opacity = "1";
+            }
+        }, () => {
+            btnGPS.textContent = "📍 GPS Desativado";
+            btnGPS.style.opacity = "1";
+            alert("Por favor, ative a localização no seu iPhone para usar esta função.");
+        });
+    } else {
+        btnGPS.textContent = "📍 GPS não suportado";
     }
 });
+
 
 // Partida no Motor
 carregarDados();
