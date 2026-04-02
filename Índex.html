@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ondejp.com | O seu guia no Japão</title>
+    <style>
+        :root {
+            --cor-fundo: #f4f7f6;
+            --cor-texto: #333333;
+            --verde-br: #009b3a;
+            --amarelo-br: #fedf00;
+            --azul-br: #002776;
+            --branco: #ffffff;
+            --verde-whats: #25D366; /* Nova cor do WhatsApp */
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: var(--cor-fundo); color: var(--cor-texto); padding-bottom: 50px; }
+        
+        header { background-color: var(--branco); padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .logo { font-size: 28px; font-weight: bold; color: var(--azul-br); text-decoration: none; }
+        .logo span { color: var(--verde-br); }
+        
+        .hero { padding: 40px 20px; text-align: center; background: linear-gradient(135deg, var(--verde-br), #00b347); color: var(--branco); }
+        .hero h1 { font-size: 22px; margin-bottom: 20px; }
+        
+        .search-container { display: flex; max-width: 500px; margin: 0 auto; gap: 8px; }
+        .search-container input { flex: 1; padding: 15px; border: none; border-radius: 8px; font-size: 16px; outline: none; }
+        .btn-busca { background-color: var(--amarelo-br); color: var(--azul-br); border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        
+        .btn-localizacao { background-color: transparent; color: var(--branco); border: 1px solid var(--branco); padding: 10px 20px; border-radius: 20px; margin-top: 15px; font-size: 13px; cursor: pointer; }
+
+        .categorias { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px; max-width: 600px; margin: -30px auto 0; }
+        .card-categoria { background-color: var(--branco); padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .icone { font-size: 28px; display: block; margin-bottom: 5px; }
+        .card-categoria span { font-size: 13px; font-weight: bold; color: var(--azul-br); }
+
+        .resultados { padding: 20px; max-width: 600px; margin: 0 auto; display: grid; gap: 15px; }
+        .card-item { background: var(--branco); padding: 18px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 6px solid var(--verde-br); }
+        .card-item h3 { color: var(--azul-br); font-size: 18px; margin-bottom: 10px; }
+        
+        /* Links e Botões */
+        .info-link { font-size: 14px; color: #002776; text-decoration: none; display: block; margin-bottom: 4px; font-weight: 500; }
+        
+        .grupo-botoes { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+        
+        .btn-maps { background: #4285F4; color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; }
+        .btn-whats { background: var(--verde-whats); color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; }
+        
+        .tag { display: inline-block; background: #e8f5e9; color: var(--verde-br); padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <header><a href="#" class="logo" onclick="window.location.reload()">onde<span>jp</span>.com</a></header>
+
+    <section class="hero">
+        <h1>O que você procura hoje?</h1>
+        <div class="search-container">
+            <input type="text" placeholder="Ex: Banco, Mercado..." id="inputBusca">
+            <button class="btn-busca" id="btnBusca">Ir</button>
+        </div>
+        <button class="btn-localizacao" id="btnLocalizacao">📍 Perto de mim</button>
+    </section>
+
+    <section class="categorias">
+        <div class="card-categoria" onclick="filtrar('Mercado')"><span class="icone">🛒</span><span>Mercados</span></div>
+        <div class="card-categoria" onclick="filtrar('Serviços')"><span class="icone">💼</span><span>Serviços</span></div>
+    </section>
+
+    <section class="resultados" id="areaResultados"></section>
+
+    <script>
+        // O Banco de Dados espelhando a sua planilha (Nome, Cidade, Endereço, Telefone, Site, Rede Social, WhatsApp, Maps, Categoria)
+        const bancoDeDados = [
+            { 
+                "nome": "Banco do Brasil - Tóquio", 
+                "cidade": "Chiyoda (Tokyo)", 
+                "endereco": "Marunouchi 1-6-5", 
+                "telefone": "0120-09-5595", 
+                "site": "bb.com.br/japao",
+                "redesocial": "@bancodobrasiljapan",
+                "whatsapp": "+81 70-3611-5595",
+                "maps_link": "https://maps.google.com/?q=Marunouchi+1-6-5,+Chiyoda,+Japan", 
+                "categoria": "Banco"
+            },
+            { 
+                "nome": "Banco do Brasil - Hamamatsu", 
+                "cidade": "Hamamatsu", 
+                "endereco": "Motoshiro-cho 216-18", 
+                "telefone": "0120-09-5595", 
+                "site": "bb.com.br/japao",
+                "redesocial": "@bancodobrasiljapan",
+                "whatsapp": "+81 70-3611-5595",
+                "maps_link": "https://maps.google.com/?q=Motoshiro-cho+216-18,+Hamamatsu,+Japan", 
+                "categoria": "Banco"
+            },
+            { 
+                "nome": "Banco do Brasil - Nagoia", 
+                "cidade": "Nagoya", 
+                "endereco": "Marunouchi 1-17-19", 
+                "telefone": "0120-09-5595", 
+                "site": "bb.com.br/japao",
+                "redesocial": "@bancodobrasiljapan",
+                "whatsapp": "+81 70-3611-5595",
+                "maps_link": "https://maps.google.com/?q=Marunouchi+1-17-19,+Nagoya,+Japan", 
+                "categoria": "Banco"
+            }
+        ];
+
+        function exibir(lista) {
+            const area = document.getElementById('areaResultados');
+            area.innerHTML = "";
+            lista.forEach(item => {
+                
+                // Mágica 1: Cria o link do site (adicionando https se faltar)
+                const linkSite = item.site ? `<a href="https://${item.site.replace('https://', '')}" target="_blank" class="info-link">🌐 Site: ${item.site}</a>` : "";
+                
+                // Mágica 2: Mostra o arroba da rede social
+                const linkSocial = item.redesocial ? `<p class="info-link">📱 Redes: ${item.redesocial}</p>` : "";
+                
+                // Mágica 3: Limpa o número do WhatsApp para o link oficial da API
+                let botaoZap = "";
+                if (item.whatsapp) {
+                    const numeroLimpo = item.whatsapp.replace(/\D/g, ''); // Tira espaços e símbolos
+                    botaoZap = `<a href="https://wa.me/${numeroLimpo}" target="_blank" class="btn-whats">💬 Chamar no Zap</a>`;
+                }
+
+                const botaoMaps = item.maps_link ? `<a href="${item.maps_link}" target="_blank" class="btn-maps">🗺️ Maps</a>` : "";
+
+                area.innerHTML += `
+                    <div class="card-item">
+                        <h3>${item.nome}</h3>
+                        <p>📍 ${item.cidade} - ${item.endereco}</p>
+                        <p>📞 ${item.telefone}</p>
+                        ${linkSite}
+                        ${linkSocial}
+                        <div class="grupo-botoes">
+                            ${botaoZap}
+                            ${botaoMaps}
+                        </div>
+                        <span class="tag">${item.categoria}</span>
+                    </div>
+                `;
+            });
+        }
+
+        // Filtro de Categorias Atualizado para incluir Bancos em "Serviços"
+        function filtrar(categoriaAlvo) {
+            const busca = categoriaAlvo.toLowerCase();
+            const filtrados = bancoDeDados.filter(item => {
+                const cat = item.categoria.toLowerCase();
+                if (busca === 'serviços') return cat.includes('banco') || cat.includes('despachante');
+                return cat.includes(busca);
+            });
+            exibir(filtrados);
+        }
+
+        // Busca e GPS (mantidos)
+        const inputBusca = document.getElementById('inputBusca');
+        document.getElementById('btnBusca').addEventListener('click', () => {
+            const termo = inputBusca.value.toLowerCase();
+            const filtrados = bancoDeDados.filter(item => 
+                item.nome.toLowerCase().includes(termo) || item.cidade.toLowerCase().includes(termo) || item.categoria.toLowerCase().includes(termo)
+            );
+            exibir(filtrados);
+        });
+
+        exibir(bancoDeDados);
+    </script>
+</body>
+</html>
