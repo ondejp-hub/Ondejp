@@ -108,3 +108,33 @@ textarea.input-form {
     resize: vertical; 
     min-height: 140px; /* Garante que a caixa de texto seja bem grande */
 }
+/* ESTILO DAS SUBCATEGORIAS (FILTROS) */
+.subcategorias-container {
+    max-width: 600px;
+    margin: 10px auto 5px;
+    padding: 0 15px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Suave no iPhone */
+}
+.subcategorias-container::-webkit-scrollbar { display: none; } /* Esconde a barra feia */
+
+.btn-subcat {
+    background-color: #e8ebf2; /* Cinza azulado */
+    color: var(--azul-br);
+    border: 1px solid #d1d8e6;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap; /* Não quebra a linha do texto */
+    transition: 0.2s;
+    touch-action: manipulation;
+}
+.btn-subcat.ativo {
+    background-color: var(--amarelo-br);
+    color: var(--azul-br);
+    border-color: var(--amarelo-br);
+}
