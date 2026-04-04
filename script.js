@@ -10,19 +10,22 @@ const peliculaMenu = document.getElementById('peliculaMenu');
 
 const urlPlanilha = "https://docs.google.com/spreadsheets/d/1-1Lb3UorM05byHJzUDsqfipyCzSfl7ODd1PC61hv3QM/export?format=tsv";
 
+// 1. MENU LATERAL
 function toggleMenu() {
     if(menuLateral && peliculaMenu) {
         menuLateral.classList.toggle('menu-aberto');
         peliculaMenu.classList.toggle('oculto');
     }
 }
-
 if(btnMenu) btnMenu.addEventListener('click', toggleMenu);
 if(btnFecharMenu) btnFecharMenu.addEventListener('click', toggleMenu);
 if(peliculaMenu) peliculaMenu.addEventListener('click', toggleMenu);
 
+// 2. GERENCIADOR DE TELAS
 function mudarTela(idTelaAlvo, titulo = "") {
-    const telas = ['telaInicial', 'telaResultados', 'telaQuemSomos', 'telaContato', 'telaDetalhes'];
+    // Lista atualizada com todas as telas, incluindo a nova de Explorar (telaCategoriasAv)
+    const telas = ['telaInicial', 'telaResultados', 'telaQuemSomos', 'telaContato', 'telaDetalhes', 'telaCategoriasAv'];
+    
     telas.forEach(tela => {
         const el = document.getElementById(tela);
         if(el) el.classList.add('oculto');
@@ -42,6 +45,7 @@ function mudarTela(idTelaAlvo, titulo = "") {
     window.scrollTo(0, 0);
 }
 
+// 3. CARREGAR DADOS DA PLANILHA
 async function carregarDados() {
     try {
         const resposta = await fetch(urlPlanilha);
@@ -61,6 +65,7 @@ async function carregarDados() {
     } catch (erro) { console.error("Erro no banco:", erro); }
 }
 
+// 4. EXIBIR CARTÕES RESUMIDOS
 function exibir(lista) {
     areaResultados.innerHTML = "";
     if (lista.length === 0) {
@@ -81,6 +86,7 @@ function exibir(lista) {
     });
 }
 
+// 5. ABRIR PÁGINA DE DETALHES
 function abrirDetalhes(idAlvo) {
     const item = bancoDeDados.find(local => local.id === idAlvo);
     if (!item) return;
@@ -129,7 +135,7 @@ function abrirDetalhes(idAlvo) {
     }
 }
 
-// MAPA DE SUBCATEGORIAS
+// 6. SUBCATEGORIAS E FILTRAGEM BASE
 const mapaSubcategorias = {
     'mercados': ['Mercado', 'Açougue', 'Mercearia'],
     'comer': ['Restaurante', 'Lanchonete', 'Padaria', 'Doce'],
@@ -194,6 +200,7 @@ function aplicarSubFiltro(subTermo, botaoClicado, macroCat) {
     }, 100);
 }
 
+// 7. EVENTOS DA TELA INICIAL
 document.querySelectorAll('.item-carrossel').forEach(botao => {
     botao.addEventListener('click', function() {
         const categoria = this.getAttribute('data-cat');
@@ -209,7 +216,6 @@ if(btnBusca) {
         if(!termo) return;
         mudarTela('telaResultados', `Busca: "${inputBusca.value}"`);
         
-        // Esconde as subcategorias na busca livre para não confundir
         const divSub = document.getElementById('areaSubcategorias');
         if(divSub) divSub.innerHTML = "";
         
@@ -242,7 +248,6 @@ if(btnGPS) {
                     
                     mudarTela('telaResultados', `Perto de: ${localidade}`);
                     
-                    // Esconde as subcategorias na busca por GPS
                     const divSub = document.getElementById('areaSubcategorias');
                     if(divSub) divSub.innerHTML = "";
                     
@@ -261,6 +266,7 @@ if(btnGPS) {
     });
 }
 
+// 8. TELA DE CONTATO (E-MAIL)
 function enviarContatoEmail() {
     const nome = document.getElementById('nomeContato').value;
     const tel = document.getElementById('telContato').value;
@@ -278,4 +284,101 @@ function enviarContatoEmail() {
     window.location.href = `mailto:${emailDestino}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
 }
 
+// 9. TELA EXPLORAR (ABAS, SANFONA E REGIÕES)
+const provinciasJapao = [
+    "Aichi", "Akita", "Aomori", "Chiba", "Ehime", "Fukui", "Fukuoka", "Fukushima", "Gifu", "Gunma", 
+    "Hiroshima", "Hokkaido", "Hyogo", "Ibaraki", "Ishikawa", "Iwate", "Kagawa", "Kagoshima", "Kanagawa", 
+    "Kochi", "Kumamoto", "Kyoto", "Mie", "Miyagi", "Miyazaki", "Nagano", "Nagasaki", "Nara", "Niigata", 
+    "Oita", "Okayama", "Okinawa", "Osaka", "Saga", "Saitama", "Shiga", "Shimane", "Shizuoka", "Tochigi", 
+    "Tokushima", "Tokyo", "Tottori", "Toyama", "Wakayama", "Yamagata", "Yamaguchi", "Yamanashi"
+];
+
+function mudarAbaExplorar(aba) {
+    const btnCat = document.getElementById('btnAbaCat');
+    const btnReg = document.getElementById('btnAbaReg');
+    const listaCat = document.getElementById('listaPorCategoria');
+    const listaReg = document.getElementById('listaPorRegiao');
+
+    if (aba === 'cat') {
+        btnCat.className = 'aba-ativa'; btnReg.className = 'aba-inativa';
+        listaCat.classList.remove('oculto'); listaReg.classList.add('oculto');
+    } else {
+        btnReg.className = 'aba-ativa'; btnCat.className = 'aba-inativa';
+        listaReg.classList.remove('oculto'); listaCat.classList.add('oculto');
+    }
+}
+
+function construirTelaExplorar() {
+    const listaCat = document.getElementById('listaPorCategoria');
+    const listaReg = document.getElementById('listaPorRegiao');
+    if (!listaCat || !listaReg) return;
+
+    let htmlCat = '<ul class="lista-simples sanfona-item" style="padding: 0 15px;">';
+    for (const [macro, subs] of Object.entries(mapaSubcategorias)) {
+        const tituloAjustado = macro.charAt(0).toUpperCase() + macro.slice(1);
+        const subsTexto = subs.join(', ');
+        htmlCat += `<li onclick="filtrar('${macro}', 'Categoria: ${tituloAjustado}')">
+                        ${tituloAjustado} <span class="tag-sub">${subsTexto}</span>
+                    </li>`;
+    }
+    htmlCat += '</ul>';
+    listaCat.innerHTML = htmlCat;
+
+    let htmlReg = '';
+    provinciasJapao.forEach(prov => {
+        let linksCategorias = '';
+        for (const macro of Object.keys(mapaSubcategorias)) {
+            const tituloAjustado = macro.charAt(0).toUpperCase() + macro.slice(1);
+            linksCategorias += `<li onclick="filtrarPorRegiao('${prov}', '${macro}', '${tituloAjustado}')">🔎 Buscar ${tituloAjustado}</li>`;
+        }
+
+        htmlReg += `
+            <div class="sanfona-item">
+                <button class="sanfona-titulo" onclick="abrirSanfona(this)">📍 ${prov}</button>
+                <div class="sanfona-conteudo">
+                    <ul class="lista-simples">
+                        <li onclick="filtrarPorRegiao('${prov}', '', 'Tudo em ${prov}')" style="color: var(--verde-br); font-weight: bold;">🌟 Ver tudo em ${prov}</li>
+                        ${linksCategorias}
+                    </ul>
+                </div>
+            </div>
+        `;
+    });
+    listaReg.innerHTML = htmlReg;
+}
+
+function abrirSanfona(botaoClicado) {
+    const itemAtual = botaoClicado.parentElement;
+    const todosItens = document.querySelectorAll('.sanfona-item');
+    if (itemAtual.classList.contains('aberto')) {
+        itemAtual.classList.remove('aberto');
+    } else {
+        todosItens.forEach(item => item.classList.remove('aberto'));
+        itemAtual.classList.add('aberto');
+    }
+}
+
+function filtrarPorRegiao(regiao, categoria, tituloExibicao) {
+    mudarTela('telaResultados', tituloExibicao);
+    areaResultados.innerHTML = "<p class='sem-resultados'>⏳ Buscando na região...</p>";
+    
+    const divSub = document.getElementById('areaSubcategorias');
+    if(divSub) divSub.innerHTML = "";
+
+    setTimeout(() => {
+        let filtrados = bancoDeDados;
+        if(categoria !== "") {
+            filtrados = pegarItensPorMacro(categoria);
+        }
+        const termoRegiao = regiao.toLowerCase();
+        filtrados = filtrados.filter(item => 
+            item.cidade.toLowerCase().includes(termoRegiao) || 
+            item.endereco.toLowerCase().includes(termoRegiao)
+        );
+        exibir(filtrados);
+    }, 150);
+}
+
+// INICIALIZAÇÃO
 carregarDados();
+setTimeout(construirTelaExplorar, 500);
