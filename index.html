@@ -11,7 +11,8 @@
     <header>
         <button id="btnMenu">☰</button>
         <a class="logo" onclick="mudarTela('telaInicial')">onde<span>jp</span>.com</a>
-        <div style="width: 30px;"></div> </header>
+        <div style="width: 30px;"></div>
+    </header>
 
     <div id="peliculaMenu" class="oculto"></div>
     <nav id="menuLateral">
@@ -19,7 +20,7 @@
         <br><br>
         <a onclick="mudarTela('telaInicial')">🏠 Início</a>
         <a onclick="mudarTela('telaQuemSomos')">👥 Quem Somos</a>
-        <a onclick="mudarTela('telaCategoriasAv')">🗂️ Categorias (Em breve)</a>
+        <a onclick="mudarTela('telaCategoriasAv')">🗂️ Categorias</a>
         <a onclick="mudarTela('telaContato')">✉️ Contato</a>
     </nav>
 
@@ -60,7 +61,7 @@
         </section>
     </div>
 
-        <div id="telaResultados" class="oculto animacao-tela">
+    <div id="telaResultados" class="oculto animacao-tela">
         <div class="cabecalho-resultados">
             <button class="btn-voltar" onclick="mudarTela('telaInicial')">⬅ Voltar</button>
             <h2 class="titulo-pagina" id="tituloSecao">Resultados</h2>
@@ -82,7 +83,6 @@
 
     <div id="telaContato" class="oculto animacao-tela pagina-estatica">
         <h2 class="titulo-pagina">Contato</h2>
-        
         <div class="card-item" style="margin-top: 15px;">
             <p style="margin-bottom: 18px; line-height: 1.5; color: #555; font-size: 15px;">
                 Tem alguma dúvida, sugestão ou quer colocar o seu negócio em destaque? Mande uma mensagem pra gente! Será um prazer ajudar.
@@ -98,7 +98,6 @@
                 </button>
             </div>
 
-
             <hr style="border: 0; border-top: 1px dashed #ddd; margin: 20px 0;">
 
             <p style="text-align: center; margin-bottom: 10px; font-weight: bold; color: var(--azul-br); font-size: 15px;">Acompanhe nossas novidades:</p>
@@ -113,6 +112,21 @@
             <button class="btn-voltar" onclick="mudarTela('telaResultados')">⬅ Voltar à Lista</button>
         </div>
         <section class="resultados" id="conteudoDetalhes" style="margin-top: 15px;"></section>
+    </div>
+
+    <div id="telaCategoriasAv" class="oculto animacao-tela pagina-estatica">
+        <div class="cabecalho-resultados" style="padding: 0 0 15px 0;">
+            <button class="btn-voltar" onclick="mudarTela('telaInicial')">⬅ Voltar</button>
+            <h2 class="titulo-pagina">Explorar</h2>
+        </div>
+        
+        <div class="abas-explorar">
+            <button id="btnAbaCat" class="aba-ativa" onclick="mudarAbaExplorar('cat')">Por Categoria</button>
+            <button id="btnAbaReg" class="aba-inativa" onclick="mudarAbaExplorar('reg')">Por Região</button>
+        </div>
+
+        <div id="listaPorCategoria" class="conteudo-aba"></div>
+        <div id="listaPorRegiao" class="conteudo-aba oculto"></div>
     </div>
 
     <script src="script.js"></script>
