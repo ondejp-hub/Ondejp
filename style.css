@@ -84,3 +84,27 @@ header { background-color: var(--branco); padding: 15px; display: flex; justify-
 
 /* FORÇA O IPAD/IPHONE A RECONHECER O CLIQUE EM TODOS OS BOTÕES E LINKS */
 a, .item-carrossel, .btn-busca, .btn-localizacao, .btn-voltar, #btnMenu, #btnFecharMenu { touch-action: manipulation; cursor: pointer; }
+
+/* ESTILOS DO FORMULÁRIO DE CONTATO (Visual Premium) */
+.form-contato { display: flex; flex-direction: column; gap: 15px; width: 100%; }
+.input-form { 
+    width: 100%; 
+    padding: 15px; 
+    border: 2px solid #eaeaea; 
+    border-radius: 10px; 
+    font-size: 16px; 
+    outline: none; 
+    transition: all 0.3s ease; 
+    background: #fdfdfd; 
+    box-sizing: border-box; /* Isso impede que o campo vaze da tela */
+    font-family: inherit;
+}
+.input-form:focus { 
+    border-color: var(--verde-br); 
+    background: #fff; 
+    box-shadow: 0 0 8px rgba(0, 155, 58, 0.2); /* Brilho verde ao clicar */
+}
+textarea.input-form { 
+    resize: vertical; 
+    min-height: 140px; /* Garante que a caixa de texto seja bem grande */
+}
