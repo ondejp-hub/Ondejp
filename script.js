@@ -10,6 +10,10 @@ const peliculaMenu = document.getElementById('peliculaMenu');
 
 const urlPlanilha = "https://docs.google.com/spreadsheets/d/1-1Lb3UorM05byHJzUDsqfipyCzSfl7ODd1PC61hv3QM/export?format=tsv";
 
+// VARIÁVEIS DE MEMÓRIA PARA O BOTÃO VOLTAR INTELIGENTE E REORDENAÇÃO DE GPS
+let telaOrigemBusca = 'telaInicial'; 
+let ultimaListaExibida = [];
+
 // 1. MENU LATERAL
 function toggleMenu() {
     if(menuLateral && peliculaMenu) {
@@ -23,7 +27,6 @@ if(peliculaMenu) peliculaMenu.addEventListener('click', toggleMenu);
 
 // 2. GERENCIADOR DE TELAS
 function mudarTela(idTelaAlvo, titulo = "") {
-    // Lista atualizada com todas as telas, incluindo a nova de Explorar (telaCategoriasAv)
     const telas = ['telaInicial', 'telaResultados', 'telaQuemSomos', 'telaContato', 'telaDetalhes', 'telaCategoriasAv'];
     
     telas.forEach(tela => {
@@ -45,7 +48,20 @@ function mudarTela(idTelaAlvo, titulo = "") {
     window.scrollTo(0, 0);
 }
 
-// 3. CARREGAR DADOS DA PLANILHA
+// 3. IDENTIFICA DE ONDE O USUÁRIO FEZ A BUSCA (Para voltar pra página certa)
+function registrarOrigemBusca() {
+    if (!document.getElementById('telaCategoriasAv').classList.contains('oculto')) {
+        telaOrigemBusca = 'telaCategoriasAv';
+    } else if (!document.getElementById('telaInicial').classList.contains('oculto')) {
+        telaOrigemBusca = 'telaInicial';
+    }
+}
+
+function voltarDaBusca() {
+    mudarTela(telaOrigemBusca);
+}
+
+// 4. CARREGAR DADOS DA PLANILHA
 async function carregarDados() {
     try {
         const resposta = await fetch(urlPlanilha);
@@ -65,28 +81,39 @@ async function carregarDados() {
     } catch (erro) { console.error("Erro no banco:", erro); }
 }
 
-// 4. EXIBIR CARTÕES RESUMIDOS
+// 5. EXIBIR CARTÕES RESUMIDOS (Agora com introdução do texto)
 function exibir(lista) {
     areaResultados.innerHTML = "";
+    ultimaListaExibida = lista; // Salva a lista atual para o botão Perto de Mim reordenar depois
+    
     if (lista.length === 0) {
         areaResultados.innerHTML = "<p class='sem-resultados'>Ops! Nada por enquanto nessa categoria.</p>";
         return;
     }
+    
     lista.forEach(item => {
+        // Encurta a descrição se ela for maior que 75 letras
+        let introDesc = "";
+        if (item.descricao) {
+            let descCurta = item.descricao.length > 75 ? item.descricao.substring(0, 75) + '...' : item.descricao;
+            introDesc = `<p style="font-size: 13px; color: #777; margin-top: 8px; line-height: 1.4; font-style: italic;">"${descCurta}"</p>`;
+        }
+
         areaResultados.innerHTML += `
             <div class="card-item" onclick="abrirDetalhes(${item.id})" style="cursor: pointer; transition: 0.2s;">
                 <h3 style="font-size: 18px;">${item.nome}</h3>
                 <p style="font-size: 14px; color: #666; margin-top: 4px;">📍 ${item.cidade}</p>
+                ${introDesc}
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
                     <span class="tag">${item.categoria}</span>
-                    <span style="font-size: 13px; color: var(--verde-br); font-weight: bold;">Ver detalhes ➔</span>
+                    <span style="font-size: 13px; color: var(--verde-br); font-weight: bold;">Ler mais ➔</span>
                 </div>
             </div>
         `;
     });
 }
 
-// 5. ABRIR PÁGINA DE DETALHES
+// 6. ABRIR PÁGINA DE DETALHES (Agora com Mapa ao lado do endereço)
 function abrirDetalhes(idAlvo) {
     const item = bancoDeDados.find(local => local.id === idAlvo);
     if (!item) return;
@@ -104,10 +131,11 @@ function abrirDetalhes(idAlvo) {
         botaoZap = `<a href="https://wa.me/${numeroLimpo}" target="_blank" class="btn-whats" style="flex: 1; text-align: center; padding: 12px; font-size: 15px; color: white; text-decoration: none; border-radius: 6px;">💬 WhatsApp</a>`;
     }
     
-    let botaoMaps = "";
+    // O Mapa vai direto na linha do endereço
+    let iconeMapa = "";
     if (item.maps_link) {
         const linkSeguro = item.maps_link.replace('http://', 'https://');
-        botaoMaps = `<a href="${linkSeguro}" target="_blank" class="btn-maps" style="flex: 1; text-align: center; padding: 12px; font-size: 15px; color: white; text-decoration: none; border-radius: 6px;">🗺️ Abrir no Maps</a>`;
+        iconeMapa = `<a href="${linkSeguro}" target="_blank" style="text-decoration: none; margin-left: 8px; font-size: 18px;" title="Abrir no Mapa">🗺️</a>`;
     }
 
     const textoDescricao = item.descricao ? `<p style="font-size: 15px; color: #444; font-style: italic; margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--amarelo-br);">"${item.descricao}"</p>` : "";
@@ -118,16 +146,18 @@ function abrirDetalhes(idAlvo) {
             <div class="card-item" style="border-left: none; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
                 <span class="tag" style="margin-bottom: 10px; display: inline-block;">${item.categoria}</span>
                 <h2 style="color: var(--azul-br); margin-bottom: 5px; font-size: 22px;">${item.nome}</h2>
-                <p style="font-size: 15px; color: #555;">📍 ${item.cidade} - ${item.endereco}</p>
+                <p style="font-size: 15px; color: #555; display: flex; align-items: center; flex-wrap: wrap;">📍 ${item.cidade} - ${item.endereco} ${iconeMapa}</p>
+                
                 ${textoDescricao}
+                
                 <div style="margin: 20px 0; border-top: 1px solid #eee; padding-top: 15px;">
                     <p style="font-size: 16px; margin-bottom: 8px;"><strong>📞 Tel:</strong> ${item.telefone || "Não informado"}</p>
                     ${linkSite}
                     ${linkSocial}
                 </div>
+                
                 <div class="grupo-botoes" style="display: flex; gap: 10px; margin-top: 25px;">
                     ${botaoZap}
-                    ${botaoMaps}
                 </div>
             </div>
         `;
@@ -135,7 +165,7 @@ function abrirDetalhes(idAlvo) {
     }
 }
 
-// 6. SUBCATEGORIAS E FILTRAGEM BASE
+// 7. SUBCATEGORIAS E FILTRAGEM BASE
 const mapaSubcategorias = {
     'mercados': ['Mercado', 'Açougue', 'Mercearia'],
     'comer': ['Restaurante', 'Lanchonete', 'Padaria', 'Doce'],
@@ -161,11 +191,15 @@ function pegarItensPorMacro(macro) {
 }
 
 function filtrar(categoriaAlvo, tituloExibicao) {
+    registrarOrigemBusca();
     mudarTela('telaResultados', tituloExibicao);
     areaResultados.innerHTML = "<p class='sem-resultados'>⏳ Carregando...</p>";
     
+    // Reseta o botão Perto de mim
+    document.getElementById('btnOrdenarPerto').textContent = "📍 Perto";
+    document.getElementById('btnOrdenarPerto').style.opacity = "1";
+
     const busca = categoriaAlvo.toLowerCase();
-    
     const divSub = document.getElementById('areaSubcategorias');
     if(divSub) {
         divSub.innerHTML = ""; 
@@ -200,7 +234,7 @@ function aplicarSubFiltro(subTermo, botaoClicado, macroCat) {
     }, 100);
 }
 
-// 7. EVENTOS DA TELA INICIAL
+// 8. EVENTOS DA TELA INICIAL E BOTÕES GPS
 document.querySelectorAll('.item-carrossel').forEach(botao => {
     botao.addEventListener('click', function() {
         const categoria = this.getAttribute('data-cat');
@@ -214,10 +248,12 @@ if(btnBusca) {
     btnBusca.addEventListener('click', () => {
         const termo = inputBusca.value.toLowerCase();
         if(!termo) return;
+        registrarOrigemBusca();
         mudarTela('telaResultados', `Busca: "${inputBusca.value}"`);
         
         const divSub = document.getElementById('areaSubcategorias');
         if(divSub) divSub.innerHTML = "";
+        document.getElementById('btnOrdenarPerto').textContent = "📍 Perto";
         
         const filtrados = bancoDeDados.filter(item => 
             item.nome.toLowerCase().includes(termo) || 
@@ -229,6 +265,7 @@ if(btnBusca) {
     });
 }
 
+// GPS da Tela Inicial (Busca Total)
 const btnGPS = document.getElementById('btnLocalizacao');
 if(btnGPS) {
     btnGPS.addEventListener('click', () => {
@@ -246,10 +283,12 @@ if(btnGPS) {
                     btnGPS.style.opacity = "1";
                     inputBusca.value = localidade;
                     
+                    registrarOrigemBusca();
                     mudarTela('telaResultados', `Perto de: ${localidade}`);
                     
                     const divSub = document.getElementById('areaSubcategorias');
                     if(divSub) divSub.innerHTML = "";
+                    document.getElementById('btnOrdenarPerto').textContent = "📍 Perto";
                     
                     const termo = localidade.toLowerCase();
                     const filtrados = bancoDeDados.filter(item => item.cidade.toLowerCase().includes(termo) || item.endereco.toLowerCase().includes(termo));
@@ -266,7 +305,55 @@ if(btnGPS) {
     });
 }
 
-// 8. TELA DE CONTATO (E-MAIL)
+// NOVO: GPS da Tela de Resultados (Reorganiza a lista atual por proximidade)
+const btnOrdenarPerto = document.getElementById('btnOrdenarPerto');
+if(btnOrdenarPerto) {
+    btnOrdenarPerto.addEventListener('click', () => {
+        if(ultimaListaExibida.length === 0) return;
+        
+        btnOrdenarPerto.style.opacity = "0.7";
+        btnOrdenarPerto.textContent = "⌛...";
+        
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const { latitude, longitude } = pos.coords;
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                    const data = await res.json();
+                    const localidade = data.address.city_district || data.address.suburb || data.address.city || data.address.town || "";
+                    
+                    if(localidade) {
+                        btnOrdenarPerto.textContent = `📍 ${localidade}`;
+                        btnOrdenarPerto.style.opacity = "1";
+                        
+                        const termo = localidade.toLowerCase();
+                        // Separa quem é da cidade de quem não é
+                        const comMatch = ultimaListaExibida.filter(i => i.cidade.toLowerCase().includes(termo) || i.endereco.toLowerCase().includes(termo));
+                        const semMatch = ultimaListaExibida.filter(i => !(i.cidade.toLowerCase().includes(termo) || i.endereco.toLowerCase().includes(termo)));
+                        
+                        if(comMatch.length > 0) {
+                            areaResultados.innerHTML = "<p class='sem-resultados'>⌛ Reorganizando...</p>";
+                            setTimeout(() => {
+                                exibir([...comMatch, ...semMatch]);
+                            }, 200);
+                        } else {
+                            alert(`Não encontramos locais desta categoria exatamente em ${localidade}, mostrando os outros resultados.`);
+                            btnOrdenarPerto.textContent = "📍 Perto";
+                        }
+                    }
+                } catch (erro) {
+                    btnOrdenarPerto.textContent = "📍 Erro";
+                    btnOrdenarPerto.style.opacity = "1";
+                }
+            }, () => {
+                btnOrdenarPerto.textContent = "📍 Sem GPS";
+                btnOrdenarPerto.style.opacity = "1";
+            });
+        }
+    });
+}
+
+// 9. TELA DE CONTATO (E-MAIL)
 function enviarContatoEmail() {
     const nome = document.getElementById('nomeContato').value;
     const tel = document.getElementById('telContato').value;
@@ -284,7 +371,7 @@ function enviarContatoEmail() {
     window.location.href = `mailto:${emailDestino}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
 }
 
-// 9. TELA EXPLORAR (ABAS, SANFONA E REGIÕES)
+// 10. TELA EXPLORAR (ABAS E REGIÕES)
 const provinciasJapao = [
     "Aichi", "Akita", "Aomori", "Chiba", "Ehime", "Fukui", "Fukuoka", "Fukushima", "Gifu", "Gunma", 
     "Hiroshima", "Hokkaido", "Hyogo", "Ibaraki", "Ishikawa", "Iwate", "Kagawa", "Kagoshima", "Kanagawa", 
@@ -359,11 +446,13 @@ function abrirSanfona(botaoClicado) {
 }
 
 function filtrarPorRegiao(regiao, categoria, tituloExibicao) {
+    registrarOrigemBusca();
     mudarTela('telaResultados', tituloExibicao);
     areaResultados.innerHTML = "<p class='sem-resultados'>⏳ Buscando na região...</p>";
     
     const divSub = document.getElementById('areaSubcategorias');
     if(divSub) divSub.innerHTML = "";
+    document.getElementById('btnOrdenarPerto').textContent = "📍 Perto";
 
     setTimeout(() => {
         let filtrados = bancoDeDados;
