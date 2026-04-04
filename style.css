@@ -10,13 +10,12 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
 body { background-color: var(--cor-fundo); color: var(--cor-texto); padding-bottom: 50px; overflow-x: hidden; }
 
-/* AJUSTES DO HEADER PARA O MENU */
+/* HEADER E MENU */
 header { background-color: var(--branco); padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
 .logo { font-size: 26px; font-weight: bold; color: var(--azul-br); text-decoration: none; cursor: pointer; }
 .logo span { color: var(--verde-br); }
 #btnMenu { background: none; border: none; font-size: 24px; color: var(--azul-br); padding: 5px; cursor: pointer; touch-action: manipulation; }
 
-/* ESTILOS DO MENU LATERAL */
 #menuLateral {
     position: fixed; top: 0; left: -280px; width: 260px; height: 100vh;
     background-color: var(--branco); box-shadow: 2px 0 10px rgba(0,0,0,0.1);
@@ -28,14 +27,9 @@ header { background-color: var(--branco); padding: 15px; display: flex; justify-
     margin-bottom: 25px; cursor: pointer; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px;
 }
 #btnFecharMenu { background: none; border: none; font-size: 20px; color: #999; align-self: flex-end; cursor: pointer; padding: 10px; }
+#peliculaMenu { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(2px); }
 
-/* PELÍCULA ESCURA ATRÁS DO MENU */
-#peliculaMenu {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(2px);
-}
-
-/* MÁGICAS DE TELA (SPA) */
+/* UTILIDADES SPA */
 .oculto { display: none !important; }
 .animacao-tela { animation: fadeIn 0.4s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -48,7 +42,7 @@ header { background-color: var(--branco); padding: 15px; display: flex; justify-
 .btn-busca { background-color: var(--amarelo-br); color: var(--azul-br); border: none; padding: 0 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
 .btn-localizacao { background-color: transparent; color: var(--branco); border: 1px solid var(--branco); padding: 8px 15px; border-radius: 20px; margin-top: 15px; font-size: 12px; cursor: pointer; }
 
-/* CARROSSEL DE CATEGORIAS */
+/* CARROSSEL */
 .carrossel-section { max-width: 600px; margin: 0 auto; padding: 10px 0; position: relative; z-index: 50; }
 .carrossel-container { display: flex; gap: 15px; overflow-x: auto; padding: 10px 20px 15px; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
 .carrossel-container::-webkit-scrollbar { display: none; }
@@ -62,79 +56,49 @@ header { background-color: var(--branco); padding: 15px; display: flex; justify-
 .color-4 .circulo { background-color: #3498db; }
 .color-5 .circulo { background-color: #f1c40f; }
 .color-6 .circulo { background-color: #27ae60; }
-.color-7 .circulo { background-color: #c0392b; } /* Cor da Categoria de Ajuda */
-
+.color-7 .circulo { background-color: #c0392b; }
 .legenda { font-size: 11px; font-weight: bold; color: var(--azul-br); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75px; }
 
-/* RESULTADOS E PÁGINAS ESTÁTICAS */
+/* RESULTADOS E CARTÕES */
 .cabecalho-resultados { max-width: 600px; margin: 0 auto; padding: 15px 15px 0; display: flex; align-items: center; gap: 10px; }
 .btn-voltar { background: var(--azul-br); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px; }
 .titulo-pagina { color: var(--azul-br); font-size: 18px; font-weight: bold; }
 .resultados { padding: 15px; max-width: 600px; margin: 0 auto; display: grid; gap: 12px; }
 .card-item { background: var(--branco); padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 5px solid var(--verde-br); }
 .card-item h3 { color: var(--azul-br); font-size: 17px; margin-bottom: 3px; }
-.descricao { font-size: 13px; color: #555; font-style: italic; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px dashed #eee; line-height: 1.4; }
-.info-link { font-size: 13px; color: var(--azul-br); text-decoration: none; display: block; margin-bottom: 3px; font-weight: 500; }
-.grupo-botoes { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-.btn-maps { background: #4285F4; color: white; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; }
-.btn-whats { background: var(--verde-whats); color: white; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; }
 .tag { display: inline-block; background: #e8f5e9; color: var(--verde-br); padding: 3px 8px; border-radius: 15px; font-size: 10px; font-weight: bold; margin-top: 8px; }
 .sem-resultados { text-align: center; padding: 40px; color: #999; font-style: italic; font-size: 14px; }
 .pagina-estatica { max-width: 600px; margin: 0 auto; padding: 20px; }
 
-/* FORÇA O IPAD/IPHONE A RECONHECER O CLIQUE EM TODOS OS BOTÕES E LINKS */
-a, .item-carrossel, .btn-busca, .btn-localizacao, .btn-voltar, #btnMenu, #btnFecharMenu { touch-action: manipulation; cursor: pointer; }
+/* FILTROS E SUBCATEGORIAS */
+.subcategorias-container { max-width: 600px; margin: 10px auto 5px; padding: 0 15px; display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.subcategorias-container::-webkit-scrollbar { display: none; }
+.btn-subcat { background-color: #e8ebf2; color: var(--azul-br); border: 1px solid #d1d8e6; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.2s; touch-action: manipulation; }
+.btn-subcat.ativo { background-color: var(--amarelo-br); color: var(--azul-br); border-color: var(--amarelo-br); }
 
-/* ESTILOS DO FORMULÁRIO DE CONTATO (Visual Premium) */
+/* CONTATO */
 .form-contato { display: flex; flex-direction: column; gap: 15px; width: 100%; }
-.input-form { 
-    width: 100%; 
-    padding: 15px; 
-    border: 2px solid #eaeaea; 
-    border-radius: 10px; 
-    font-size: 16px; 
-    outline: none; 
-    transition: all 0.3s ease; 
-    background: #fdfdfd; 
-    box-sizing: border-box; /* Isso impede que o campo vaze da tela */
-    font-family: inherit;
-}
-.input-form:focus { 
-    border-color: var(--verde-br); 
-    background: #fff; 
-    box-shadow: 0 0 8px rgba(0, 155, 58, 0.2); /* Brilho verde ao clicar */
-}
-textarea.input-form { 
-    resize: vertical; 
-    min-height: 140px; /* Garante que a caixa de texto seja bem grande */
-}
-/* ESTILO DAS SUBCATEGORIAS (FILTROS) */
-.subcategorias-container {
-    max-width: 600px;
-    margin: 10px auto 5px;
-    padding: 0 15px;
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch; /* Suave no iPhone */
-}
-.subcategorias-container::-webkit-scrollbar { display: none; } /* Esconde a barra feia */
+.input-form { width: 100%; padding: 15px; border: 2px solid #eaeaea; border-radius: 10px; font-size: 16px; outline: none; transition: all 0.3s ease; background: #fdfdfd; box-sizing: border-box; font-family: inherit; }
+.input-form:focus { border-color: var(--verde-br); background: #fff; box-shadow: 0 0 8px rgba(0, 155, 58, 0.2); }
+textarea.input-form { resize: vertical; min-height: 140px; }
 
-.btn-subcat {
-    background-color: #e8ebf2; /* Cinza azulado */
-    color: var(--azul-br);
-    border: 1px solid #d1d8e6;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap; /* Não quebra a linha do texto */
-    transition: 0.2s;
-    touch-action: manipulation;
-}
-.btn-subcat.ativo {
-    background-color: var(--amarelo-br);
-    color: var(--azul-br);
-    border-color: var(--amarelo-br);
-}
+/* TELA EXPLORAR (ABAS E SANFONA) */
+.abas-explorar { display: flex; gap: 10px; margin-bottom: 20px; }
+.abas-explorar button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; touch-action: manipulation; }
+.aba-ativa { background: var(--azul-br); color: white; box-shadow: 0 4px 10px rgba(0,39,118,0.2); }
+.aba-inativa { background: #e8ebf2; color: var(--azul-br); }
+.sanfona-item { margin-bottom: 10px; border: 1px solid #eaeaea; border-radius: 10px; overflow: hidden; background: white; transition: 0.3s; }
+.sanfona-titulo { width: 100%; text-align: left; padding: 15px; background: #fdfdfd; border: none; font-size: 16px; font-weight: bold; color: var(--azul-br); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.sanfona-titulo:after { content: '▼'; font-size: 12px; color: #999; }
+.sanfona-conteudo { display: none; padding: 10px 15px 15px; background: white; border-top: 1px solid #eaeaea; }
+.sanfona-item.aberto { border-color: var(--verde-br); }
+.sanfona-item.aberto .sanfona-titulo { background: #f0fdf4; color: var(--verde-br); }
+.sanfona-item.aberto .sanfona-titulo:after { content: '▲'; color: var(--verde-br); }
+.sanfona-item.aberto .sanfona-conteudo { display: block; }
+.lista-simples { list-style: none; padding: 0; }
+.lista-simples li { padding: 12px 0; border-bottom: 1px dashed #eee; cursor: pointer; color: #444; font-weight: 500; font-size: 15px; }
+.lista-simples li:last-child { border-bottom: none; }
+.tag-sub { font-size: 12px; color: #888; display: block; margin-top: 4px; font-weight: normal; }
+
+/* FORÇA O IPAD/IPHONE A RECONHECER CLIQUE */
+a, .item-carrossel, .btn-busca, .btn-localizacao, .btn-voltar, #btnMenu, #btnFecharMenu { touch-action: manipulation; cursor: pointer; }
