@@ -129,25 +129,69 @@ function abrirDetalhes(idAlvo) {
     }
 }
 
+// MAPA DE SUBCATEGORIAS
+const mapaSubcategorias = {
+    'mercados': ['Mercado', 'Açougue', 'Mercearia'],
+    'comer': ['Restaurante', 'Lanchonete', 'Padaria', 'Doce'],
+    'saúde': ['Clínica', 'Hospital', 'Dentista', 'Farmácia'],
+    'beleza': ['Cabeleireiro', 'Manicure', 'Estética', 'Barbeiro'],
+    'burocracia': ['Despachante', 'Intérprete', 'Tradução'],
+    'serviços': ['Banco', 'Mecânico', 'Costureira', 'Designer'],
+    'ajuda': ['Prefeitura', 'Delegacia', 'Embaixada']
+};
+
+function pegarItensPorMacro(macro) {
+    return bancoDeDados.filter(item => {
+        const cat = item.categoria.toLowerCase();
+        if (macro === 'mercados') return cat.includes('mercado') || cat.includes('açougue') || cat.includes('mercearia');
+        if (macro === 'comer') return cat.includes('restaurante') || cat.includes('lanchonete') || cat.includes('padaria') || cat.includes('doce');
+        if (macro === 'saúde') return cat.includes('hospital') || cat.includes('clínica') || cat.includes('dentista') || cat.includes('farmácia');
+        if (macro === 'beleza') return cat.includes('manicure') || cat.includes('cabeleireiro') || cat.includes('estética') || cat.includes('barbeiro');
+        if (macro === 'burocracia') return cat.includes('despachante') || cat.includes('intérprete') || cat.includes('tradução');
+        if (macro === 'serviços') return cat.includes('banco') || cat.includes('mecânico') || cat.includes('costureira') || cat.includes('designer') || cat.includes('outros');
+        if (macro === 'ajuda') return cat.includes('prefeitura') || cat.includes('delegacia') || cat.includes('embaixada');
+        return cat.includes(macro);
+    });
+}
+
 function filtrar(categoriaAlvo, tituloExibicao) {
     mudarTela('telaResultados', tituloExibicao);
     areaResultados.innerHTML = "<p class='sem-resultados'>⏳ Carregando...</p>";
     
+    const busca = categoriaAlvo.toLowerCase();
+    
+    const divSub = document.getElementById('areaSubcategorias');
+    if(divSub) {
+        divSub.innerHTML = ""; 
+        const subs = mapaSubcategorias[busca];
+        if(subs && subs.length > 0) {
+            divSub.innerHTML = `<button class="btn-subcat ativo" onclick="aplicarSubFiltro('todos', this, '${busca}')">Todos</button>`;
+            subs.forEach(sub => {
+                divSub.innerHTML += `<button class="btn-subcat" onclick="aplicarSubFiltro('${sub.toLowerCase()}', this, '${busca}')">${sub}</button>`;
+            });
+        }
+    }
+
     setTimeout(() => {
-        const busca = categoriaAlvo.toLowerCase();
-        const filtrados = bancoDeDados.filter(item => {
-            const cat = item.categoria.toLowerCase();
-            if (busca === 'mercados') return cat.includes('mercado') || cat.includes('açougue');
-            if (busca === 'comer') return cat.includes('restaurante');
-            if (busca === 'saúde') return cat.includes('hospital') || cat.includes('clínica') || cat.includes('dentista');
-            if (busca === 'beleza') return cat.includes('manicure') || cat.includes('cabeleireiro') || cat.includes('maquiador') || cat.includes('estética');
-            if (busca === 'burocracia') return cat.includes('despachante') || cat.includes('intérprete') || cat.includes('tradução');
-            if (busca === 'serviços') return cat.includes('banco') || cat.includes('designer') || cat.includes('guia') || cat.includes('outros');
-            if (busca === 'ajuda') return cat.includes('prefeitura') || cat.includes('delegacia') || cat.includes('embaixada');
-            return cat.includes(busca);
-        });
+        const filtrados = pegarItensPorMacro(busca);
         exibir(filtrados);
     }, 150); 
+}
+
+function aplicarSubFiltro(subTermo, botaoClicado, macroCat) {
+    const botoes = document.querySelectorAll('.btn-subcat');
+    botoes.forEach(b => b.classList.remove('ativo'));
+    botaoClicado.classList.add('ativo');
+
+    areaResultados.innerHTML = "<p class='sem-resultados'>⏳ Filtrando...</p>";
+
+    setTimeout(() => {
+        let filtrados = pegarItensPorMacro(macroCat);
+        if(subTermo !== 'todos') {
+            filtrados = filtrados.filter(item => item.categoria.toLowerCase().includes(subTermo));
+        }
+        exibir(filtrados);
+    }, 100);
 }
 
 document.querySelectorAll('.item-carrossel').forEach(botao => {
@@ -164,6 +208,11 @@ if(btnBusca) {
         const termo = inputBusca.value.toLowerCase();
         if(!termo) return;
         mudarTela('telaResultados', `Busca: "${inputBusca.value}"`);
+        
+        // Esconde as subcategorias na busca livre para não confundir
+        const divSub = document.getElementById('areaSubcategorias');
+        if(divSub) divSub.innerHTML = "";
+        
         const filtrados = bancoDeDados.filter(item => 
             item.nome.toLowerCase().includes(termo) || 
             item.cidade.toLowerCase().includes(termo) || 
@@ -186,10 +235,17 @@ if(btnGPS) {
                     const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
                     const data = await res.json();
                     const localidade = data.address.city_district || data.address.suburb || data.address.city || data.address.town || "sua região";
+                    
                     btnGPS.textContent = `📍 Em ${localidade}`;
                     btnGPS.style.opacity = "1";
                     inputBusca.value = localidade;
+                    
                     mudarTela('telaResultados', `Perto de: ${localidade}`);
+                    
+                    // Esconde as subcategorias na busca por GPS
+                    const divSub = document.getElementById('areaSubcategorias');
+                    if(divSub) divSub.innerHTML = "";
+                    
                     const termo = localidade.toLowerCase();
                     const filtrados = bancoDeDados.filter(item => item.cidade.toLowerCase().includes(termo) || item.endereco.toLowerCase().includes(termo));
                     exibir(filtrados);
@@ -205,7 +261,6 @@ if(btnGPS) {
     });
 }
 
-// FUNÇÃO DE E-MAIL CORRIGIDA
 function enviarContatoEmail() {
     const nome = document.getElementById('nomeContato').value;
     const tel = document.getElementById('telContato').value;
@@ -220,7 +275,6 @@ function enviarContatoEmail() {
     const assunto = "Novo Contato - ondejp.com";
     const corpoEmail = `Nome: ${nome}\nTelefone/WhatsApp: ${tel}\n\nMensagem:\n${msg}`;
 
-    // Tenta abrir o cliente de e-mail padrão
     window.location.href = `mailto:${emailDestino}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
 }
 
