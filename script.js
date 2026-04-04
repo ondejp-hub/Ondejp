@@ -266,7 +266,7 @@ function enviarContatoEmail() {
     }
 
     // ATENÇÃO: COLOQUE AQUI O SEU E-MAIL REAL DE CONTATO DA PLATAFORMA
-    const emailDestino = "seuemail@exemplo.com"; 
+    const emailDestino = "ondejp.com@gmail.com"; 
     
     // Monta o Assunto e a Mensagem pro formato do E-mail
     const assunto = encodeURIComponent("Novo Contato - ondejp.com");
