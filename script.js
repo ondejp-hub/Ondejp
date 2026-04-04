@@ -253,6 +253,30 @@ if(btnGPS) {
 }
 
 // -----------------------------------------
+// 10. ENVIAR FORMULÁRIO DE CONTATO (E-MAIL)
+// -----------------------------------------
+function enviarContatoEmail() {
+    const nome = document.getElementById('nomeContato').value;
+    const tel = document.getElementById('telContato').value;
+    const msg = document.getElementById('msgContato').value;
+
+    if(!nome || !msg) {
+        alert("Por favor, preencha pelo menos o seu nome e a mensagem!");
+        return;
+    }
+
+    // ATENÇÃO: COLOQUE AQUI O SEU E-MAIL REAL DE CONTATO DA PLATAFORMA
+    const emailDestino = "seuemail@exemplo.com"; 
+    
+    // Monta o Assunto e a Mensagem pro formato do E-mail
+    const assunto = encodeURIComponent("Novo Contato - ondejp.com");
+    const corpoEmail = encodeURIComponent(`Nome: ${nome}\nTelefone/WhatsApp: ${tel}\n\nMensagem:\n${msg}`);
+
+    // Dispara o comando que abre o app de e-mail do cliente
+    window.location.href = `mailto:${emailDestino}?subject=${assunto}&body=${corpoEmail}`;
+}
+
+// -----------------------------------------
 // INÍCIO DO APLICATIVO
 // -----------------------------------------
 carregarDados();
