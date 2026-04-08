@@ -56,7 +56,7 @@ function voltarDaBusca() {
     mudarTela(origemDaBusca);
 }
 
-// 3. CARREGAR DADOS DA PLANILHA (Atualizado para o novo formato de colunas)
+// 3. CARREGAR DADOS DA PLANILHA E LER LINKS DIRETOS (DEEP LINKS)
 async function carregarDados() {
     try {
         const resposta = await fetch(urlPlanilha);
@@ -67,12 +67,12 @@ async function carregarDados() {
             const colunas = linhas[i].split('\t'); 
             
             const item = {
-                id: colunas[0] || String(i), // Usa o seu ID (Coluna A), ou gera um genérico se estiver vazio
+                id: colunas[0] || String(i), 
                 nome: colunas[1] || "", 
                 cidade: colunas[2] || "", 
                 endereco: colunas[3] || "", 
                 telefone: colunas[4] || "", 
-                telefone2: colunas[5] || "", // NOVA COLUNA F
+                telefone2: colunas[5] || "", 
                 site: colunas[6] || "", 
                 redesocial: colunas[7] || "", 
                 whatsapp: colunas[8] || "", 
@@ -82,6 +82,14 @@ async function carregarDados() {
             };
             bancoDeDados.push(item);
         }
+
+        // NOVO: Verifica se o usuário chegou através de um link compartilhado
+        const urlParams = new URLSearchParams(window.location.search);
+        const idCompartilhado = urlParams.get('id');
+        if (idCompartilhado) {
+            abrirDetalhes(idCompartilhado);
+        }
+
     } catch (erro) { console.error("Erro no banco:", erro); }
 }
 
@@ -112,7 +120,6 @@ function renderizarLista(lista) {
             iconeMapaLista = `<a href="${linkSeguro}" target="_blank" onclick="event.stopPropagation()" style="text-decoration: none; margin-left: 6px; font-size: 16px;" title="Abrir no Mapa">🗺️</a>`;
         }
 
-        // Adicionado as aspas simples ao redor do item.id para evitar erros com letras no ID
         areaResultados.innerHTML += `
             <div class="card-item" onclick="abrirDetalhes('${item.id}')" style="cursor: pointer; transition: 0.2s;">
                 <h3 style="font-size: 18px;">${item.nome}</h3>
@@ -127,9 +134,8 @@ function renderizarLista(lista) {
     });
 }
 
-// 5. ABRIR PÁGINA DE DETALHES (Atualizado com Telefone 2)
+// 5. ABRIR PÁGINA DE DETALHES (AGORA COM BOTÃO DE COMPARTILHAR)
 function abrirDetalhes(idAlvo) {
-    // Procura o local pelo ID usando comparação de texto
     const item = bancoDeDados.find(local => String(local.id) === String(idAlvo));
     if (!item) return;
 
@@ -143,7 +149,7 @@ function abrirDetalhes(idAlvo) {
     let botaoZap = "";
     if (item.whatsapp) {
         const numeroLimpo = item.whatsapp.replace(/\D/g, '');
-        botaoZap = `<a href="https://wa.me/${numeroLimpo}" target="_blank" class="btn-whats" style="flex: 1; text-align: center; padding: 12px; font-size: 15px; color: white; text-decoration: none; border-radius: 6px;">💬 WhatsApp</a>`;
+        botaoZap = `<a href="https://wa.me/${numeroLimpo}" target="_blank" class="btn-whats" style="flex: 1; min-width: 100px; text-align: center; padding: 12px; font-size: 14px; color: white; text-decoration: none; border-radius: 6px;">💬 WhatsApp</a>`;
     }
     
     let iconeMapaDetalhe = "";
@@ -154,7 +160,6 @@ function abrirDetalhes(idAlvo) {
 
     const textoDescricao = item.descricao ? `<p style="font-size: 15px; color: #444; font-style: italic; margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--amarelo-br);">"${item.descricao}"</p>` : "";
 
-    // Lógica para mostrar 1 telefone, os 2 telefones, ou nenhum
     let textoTelefones = "";
     if (item.telefone && item.telefone2) {
         textoTelefones = `${item.telefone} / ${item.telefone2}`;
@@ -165,6 +170,9 @@ function abrirDetalhes(idAlvo) {
     } else {
         textoTelefones = "Não informado";
     }
+
+    // Cria o botão de compartilhar (Web Share API)
+    const botaoCompartilhar = `<button onclick="compartilharLocal('${item.id}')" style="flex: 1; min-width: 100px; text-align: center; padding: 12px; font-size: 14px; color: var(--azul-br); background: #e8ebf2; border: 1px solid #d1d8e6; border-radius: 6px; cursor: pointer; font-weight: bold;">📤 Enviar</button>`;
 
     const divConteudo = document.getElementById('conteudoDetalhes');
     if(divConteudo) {
@@ -182,8 +190,9 @@ function abrirDetalhes(idAlvo) {
                     ${linkSocial}
                 </div>
                 
-                <div class="grupo-botoes" style="display: flex; gap: 10px; margin-top: 25px;">
+                <div class="grupo-botoes" style="display: flex; gap: 10px; margin-top: 25px; flex-wrap: wrap;">
                     ${botaoZap}
+                    ${botaoCompartilhar}
                 </div>
             </div>
         `;
@@ -191,7 +200,33 @@ function abrirDetalhes(idAlvo) {
     }
 }
 
-// 6. SUBCATEGORIAS E FILTRAGEM
+// 6. FUNÇÃO DE COMPARTILHAMENTO (NOVA)
+function compartilharLocal(idAlvo) {
+    const item = bancoDeDados.find(local => String(local.id) === String(idAlvo));
+    if (!item) return;
+
+    // Constrói o link limpo (ex: ondejp.com/?id=123)
+    const urlBase = window.location.href.split('?')[0]; 
+    const linkParaCompartilhar = `${urlBase}?id=${item.id}`;
+
+    const dadosDeCompartilhamento = {
+        title: `ondejp.com - ${item.nome}`,
+        text: `Veja este local: ${item.nome} em ${item.cidade}`,
+        url: linkParaCompartilhar
+    };
+
+    // Tenta abrir a tela nativa de compartilhamento do celular
+    if (navigator.share) {
+        navigator.share(dadosDeCompartilhamento)
+            .catch((error) => console.log('Erro ao compartilhar', error));
+    } else {
+        // Se for um PC antigo, ele apenas copia o link
+        navigator.clipboard.writeText(`${dadosDeCompartilhamento.text} - ${dadosDeCompartilhamento.url}`);
+        alert("Link copiado! Agora é só colar onde quiser.");
+    }
+}
+
+// 7. SUBCATEGORIAS E FILTRAGEM
 const mapaSubcategorias = {
     'mercados': ['Mercado', 'Açougue', 'Mercearia'],
     'comer': ['Restaurante', 'Lanchonete', 'Padaria', 'Doce'],
@@ -258,7 +293,7 @@ function aplicarSubFiltro(subTermo, botaoClicado, macroCat) {
     }, 100);
 }
 
-// 7. EVENTOS DA TELA INICIAL
+// 8. EVENTOS DA TELA INICIAL
 document.querySelectorAll('.item-carrossel').forEach(botao => {
     botao.addEventListener('click', function() {
         const categoria = this.getAttribute('data-cat');
@@ -330,7 +365,7 @@ if(btnGPS) {
     });
 }
 
-// 8. ORDENAR POR PERTO DENTRO DA LISTA
+// 9. ORDENAR POR PERTO DENTRO DA LISTA
 function ordenarPorPerto() {
     const btn = document.getElementById('btnOrdenarPerto');
     if(ultimaListaExibida.length === 0) return;
@@ -376,7 +411,7 @@ function ordenarPorPerto() {
     }
 }
 
-// 9. CONTATO (E-MAIL)
+// 10. CONTATO (E-MAIL)
 function enviarContatoEmail() {
     const nome = document.getElementById('nomeContato').value;
     const tel = document.getElementById('telContato').value;
@@ -391,7 +426,7 @@ function enviarContatoEmail() {
     window.location.href = `mailto:${emailDestino}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpoEmail)}`;
 }
 
-// 10. TELA EXPLORAR (ABAS E REGIÕES)
+// 11. TELA EXPLORAR (ABAS E REGIÕES)
 const provinciasJapao = [
     "Aichi", "Akita", "Aomori", "Chiba", "Ehime", "Fukui", "Fukuoka", "Fukushima", "Gifu", "Gunma", 
     "Hiroshima", "Hokkaido", "Hyogo", "Ibaraki", "Ishikawa", "Iwate", "Kagawa", "Kagoshima", "Kanagawa", 
